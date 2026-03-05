@@ -191,6 +191,10 @@ def run_ingestion(state: ResearchState) -> ResearchState:
     except Exception:
         state["known_dead_ends"] = []  # Fallback to empty list
     
+    # Also populate known dead ends in the state for scouts to check
+    if not state.get("known_dead_ends"):
+        state["known_dead_ends"] = []
+    
     errors = state.get("errors", [])
     
     # Process each Surah

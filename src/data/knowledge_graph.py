@@ -98,3 +98,62 @@ class KnowledgeGraphLinker:
 
     def get_dead_end_fingerprints(self) -> list[str]:
         return self._graph.get("dead_end_fingerprints", [])
+
+    def query_similar_patterns(self, fingerprint: str) -> list[dict]:
+        """
+        Check if a new finding is structurally similar to stored findings.
+        Uses simple substring match on description.
+        
+        Args:
+            fingerprint: The fingerprint to check for similarity
+            
+        Returns:
+            List of similar findings from the knowledge graph
+        """
+        similar = []
+        target_desc = None
+        
+        # First, find the description for this fingerprint
+        for finding in self._graph.get("findings", []):
+            if finding.get("fingerprint") == fingerprint:
+                target_desc = finding.get("description", "")
+                break
+        
+        if not target_desc:
+            return similar
+        
+        # Find structurally similar patterns (substring match)
+        target_words = set(target_desc.lower().split())
+        
+        for finding in self._graph.get("findings", []):
+            if finding.get("fingerprint") == fingerprint:
+                continue  # Skip self
+                
+            finding_desc = finding.get("description", "")
+            finding_words = set(finding_desc.lower().split())
+            
+            # Calculate word overlap
+            overlap = len(target_words.intersection(finding_words))
+            if overlap >= 3:  # At least 3 words in common
+                similar.append(finding)
+        
+        return similar
+
+    def get_top_findings(self, n: int = 5) -> list[dict]:
+        """
+        Return top-scored stored findings.
+        
+        Args:
+            n: Number of top findings to return
+            
+        Returns:
+            List of top findings sorted by score descending
+        """
+        findings = self._graph.get("findings", [])
+        # Sort by score descending, handle missing scores
+        sorted_findings = sorted(
+            findings, 
+            key=lambda f: f.get("score", 0.0), 
+            reverse=True
+        )
+        return sorted_findings[:n]
