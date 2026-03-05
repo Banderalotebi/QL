@@ -19,8 +19,8 @@ import re
 import unicodedata
 from pathlib import Path
 
-from src.core.state import ResearchState, RasmMatrix, TashkeelMatrix
-from src.data.muqattaat import MUQATTAAT_SURAHS, BY_SURAH
+from src.core.state import ResearchState
+from src.utils.arabic import strip_basmalah, arabic_letters_only, detect_muqattaat_in_text
 
 # ── Arabic Unicode ranges ─────────────────────────────────────────────────────
 
@@ -105,160 +105,50 @@ def isolate_muqattaat(raw_text: str, surah_number: int) -> list[str]:
 
 def load_surah_text(surah_number: int, data_dir: str = "data/raw") -> str | None:
     """Load raw Quran text for a given Surah number from the dataset."""
+    # Construct path to the Surah file
+    data_dir_path = Path(data_dir)
     candidates = [
-        Path(data_dir) / f"Surah_{surah_number}.txt",
-        Path(data_dir) / "quran-uthmani-min" / f"Surah_{surah_number}.txt",
-        Path(data_dir) / f"surah_{surah_number}.txt",
+        data_dir_path / f"Surah_{surah_number}.txt",
+        data_dir_path / "quran-uthmani-min" / f"Surah_{surah_number}.txt",
+        data_dir_path / f"surah_{surah_number}.txt",
     ]
+    
     for path in candidates:
-        if path.exists():
-            return path.read_text(encoding="utf-8").strip()
+        try:
+            if path.exists():
+                content = path.read_text(encoding="utf-8").strip()
+                if content:
+                    return content
+        except Exception as e:
+            print(f"Error reading {path}: {e}")
+            continue
 
-    # Try the full Quran text files
-    full_quran = Path(data_dir) / "quran-uthmani-min.txt"
-    if full_quran.exists():
-        # Parse out the surah (simplified — full parser in utils/arabic.py)
-        pass
-
+    print(f"Warning: Surah file not found for Surah {surah_number}")
     return None
 
 
 # ── Main ingestion function ───────────────────────────────────────────────────
 
-def ingest_surah(surah_number: int, raw_text: str) -> tuple[RasmMatrix, TashkeelMatrix]:
+def ingest_surah(surah_number: int, raw_text: str | None = None) -> tuple[list[str] | None, list[str] | None, str | None, str | None]:
     """
     Process one Surah's raw text into the dual-layer matrices.
 
-    Returns:
-        (RasmMatrix, TashkeelMatrix) — strictly separated, never mixed.
-    """
-    # Strip Basmalah if present
-    text = raw_text.replace(BASMALAH, "").strip()
-
-    # ── Layer A: Rasm ──────────────────────────────────────────────────────
-    rasm_text = extract_rasm(text)
-    letter_seq = tokenize_letters(rasm_text)
-    isolated = isolate_muqattaat(raw_text, surah_number)
-
-    rasm = RasmMatrix(
-        surah_number=surah_number,
-        raw_rasm=rasm_text,
-        letter_sequence=letter_seq,
-        is_surah_start=True,
-        isolated_sequences=isolated,
-        is_muqattaat_surah=surah_number in MUQATTAAT_SURAHS,
-    )
-
-    # ── Layer B: Tashkeel ──────────────────────────────────────────────────
-    dmap = extract_tashkeel_map(text)
-    rhythm = derive_phonetic_rhythm(text)
-
-    # Basic syllable tokenization (CV groups)
-    syllables = re.findall(r'C+V?', rhythm)
-
-    tashkeel = TashkeelMatrix(
-        surah_number=surah_number,
-        diacritic_map=dmap,
-        syllable_structure=syllables,
-        phonetic_rhythm=rhythm,
-    )
-
-    return rasm, tashkeel
-
-
-def run_ingestion(state: ResearchState) -> ResearchState:
-    """
-    LangGraph node: ingest all requested Surahs.
-    Populates state["rasm_matrices"] and state["tashkeel_matrices"].
-    """
-    surah_numbers: list[int] = state.get("input_surah_numbers", [])
-    data_dir: str = state.get("data_dir", "data/raw")  # type: ignore[assignment]
-
-    rasm_matrices: dict = {}
-    tashkeel_matrices: dict = {}
-    muqattaat_registry: dict = {}
-
-    for snum in surah_numbers:
-        raw = load_surah_text(snum, data_dir)
-        if raw is None:
-            # Fallback: use canonical Muqattaat entry text only
-            from src.data.muqattaat import BY_SURAH as MQ
-            entry = MQ.get(snum)
-            raw = entry.arabic_sequence if entry else ""
-
-        rasm, tashkeel = ingest_surah(snum, raw)
-        rasm_matrices[snum] = rasm
-        tashkeel_matrices[snum] = tashkeel
-
-        if snum in MUQATTAAT_SURAHS:
-            muqattaat_registry[snum] = BY_SURAH[snum].arabic_sequence
-
-    state["rasm_matrices"] = rasm_matrices
-    state["tashkeel_matrices"] = tashkeel_matrices
-    state["muqattaat_registry"] = muqattaat_registry
-    state.setdefault("raw_hypotheses", [])
-    state.setdefault("rejected_hypotheses", [])
-    state.setdefault("known_dead_ends", [])
-
-    return state
-# Data ingestion pipeline for the Muqattaat Cryptanalytic Lab
-
-from __future__ import annotations
-
-import os
-from pathlib import Path
-from typing import Optional
-
-from src.core.state import ResearchState
-from src.utils.arabic import strip_basmalah, arabic_letters_only, detect_muqattaat_in_text
-
-
-def load_surah_text(surah_number: int) -> Optional[str]:
-    """
-    Load raw Uthmani text for a specific Surah.
-    
     Args:
         surah_number: Surah number (1-indexed)
-        
-    Returns:
-        Raw Uthmani text content, or None if file not found
-    """
-    # Construct path to the Surah file
-    data_dir = Path("data/raw/quran-uthmani-min")
-    surah_file = data_dir / f"Surah_{surah_number}.txt"
-    
-    try:
-        if not surah_file.exists():
-            print(f"Warning: Surah file not found: {surah_file}")
-            return None
-            
-        with open(surah_file, 'r', encoding='utf-8') as f:
-            content = f.read().strip()
-            
-        if not content:
-            print(f"Warning: Empty Surah file: {surah_file}")
-            return None
-            
-        return content
-        
-    except Exception as e:
-        print(f"Error loading Surah {surah_number}: {e}")
-        return None
+        raw_text: Optional raw text, if None will load from file
 
-
-def process_surah_to_matrices(text: str, surah_number: int) -> tuple[list[str], list[str]]:
-    """
-    Process raw Surah text into rasm and tashkeel matrices.
-    
-    Args:
-        text: Raw Uthmani text
-        surah_number: Surah number for context
-        
     Returns:
-        Tuple of (rasm_matrix, tashkeel_matrix)
+        Tuple of (rasm_matrix, tashkeel_matrix, muqattaat, raw_text)
     """
+    # Load raw text if not provided
+    if raw_text is None:
+        raw_text = load_surah_text(surah_number)
+    
+    if not raw_text:
+        return None, None, None, None
+    
     # Strip Basmalah first
-    clean_text = strip_basmalah(text)
+    clean_text = strip_basmalah(raw_text)
     
     # For rasm layer: extract only Arabic letters (no diacritics)
     rasm_letters = arabic_letters_only(clean_text)
@@ -268,31 +158,10 @@ def process_surah_to_matrices(text: str, surah_number: int) -> tuple[list[str], 
     # we'd extract diacritic overlays more precisely
     tashkeel_matrix = [clean_text]  # Keep as single string for now
     
-    return rasm_letters, tashkeel_matrix
-
-
-def ingest_surah(surah_number: int) -> tuple[Optional[list[str]], Optional[list[str]], Optional[str], Optional[str]]:
-    """
-    Ingest a single Surah and return processed matrices.
-    
-    Args:
-        surah_number: Surah number (1-indexed)
-        
-    Returns:
-        Tuple of (rasm_matrix, tashkeel_matrix, muqattaat, raw_text)
-    """
-    # Load raw text
-    raw_text = load_surah_text(surah_number)
-    if not raw_text:
-        return None, None, None, None
-    
-    # Process into matrices
-    rasm_matrix, tashkeel_matrix = process_surah_to_matrices(raw_text, surah_number)
-    
     # Detect Muqattaat
     muqattaat = detect_muqattaat_in_text(raw_text, surah_number)
     
-    return rasm_matrix, tashkeel_matrix, muqattaat, raw_text
+    return rasm_letters, tashkeel_matrix, muqattaat, raw_text
 
 
 def run_ingestion(state: ResearchState) -> ResearchState:
