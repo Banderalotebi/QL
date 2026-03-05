@@ -1,168 +1,96 @@
 # src/core/state.py
-# ResearchState TypedDict and Hypothesis dataclass for the Muqattaat Cryptanalytic Lab
+# Research state machine definition for the Muqattaat Cryptanalytic Lab
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import TypedDict
+from langgraph.graph import END, StateGraph
+
+from src.agents.micro_scout import MicroScout
+from src.agents.static_scout import StaticScout
+from src.agents.linguistic_scout import LinguisticScout
+from src.agents.symbolic_scout import SymbolicScout
+from src.agents.math_scout import MathScout
+from src.agents.freq_scout import FreqScout
+from src.agents.deep_scout import DeepScout
+from src.agents.the_fool import TheFool
+from src.agents.synthesizer import Synthesizer
+
+# ── Agent singletons ──────────────────────────────────────────────────────────
+_micro_scout = MicroScout()
+_static_scout = StaticScout()
+_linguistic_scout = LinguisticScout()
+_symbolic_scout = SymbolicScout()
+_math_scout = MathScout()
+_freq_scout = FreqScout()
+_deep_scout = DeepScout()
+_the_fool = TheFool()
+_synthesizer = Synthesizer()
 
 
-@dataclass
-class Hypothesis:
-    """
-    A single research hypothesis produced by a Scout agent.
+# ── Node wrappers ─────────────────────────────────────────────────────────────
 
-    All fields are required. `goal_link` must be a non-empty, specific sentence
-    explaining how this finding contributes to discovering the meaning of the Muqattaat.
-    The Fool will reject any Hypothesis where goal_link is empty or generic.
-    """
+def _run_ingestion(state: ResearchState) -> ResearchState:
+    from src.data.ingestion import run_ingestion
+    return run_ingestion(state)
 
-    source_scout: str
-    """Name of the Scout agent that produced this hypothesis."""
+def _run_micro_scout(state: ResearchState) -> ResearchState:
+    return _micro_scout.run(state)
 
-    goal_link: str
-    """
-    Plain-English sentence explaining how this finding contributes to discovering
-    the meaning of the Muqattaat. Must be specific — not generic boilerplate.
-    """
+def _run_static_scout(state: ResearchState) -> ResearchState:
+    return _static_scout.run(state)
 
-    description: str
-    """Human-readable summary of what was found."""
+def _run_linguistic_scout(state: ResearchState) -> ResearchState:
+    return _linguistic_scout.run(state)
 
-    transformation_steps: int
-    """
-    Number of logical operations / transformations applied to reach this hypothesis.
-    Feeds directly into the Occam penalty: score *= exp(-0.15 * transformation_steps).
-    """
+def _run_symbolic_scout(state: ResearchState) -> ResearchState:
+    return _symbolic_scout.run(state)
 
-    evidence_snippets: list[str]
-    """Raw data excerpts, counts, or quotes that support this hypothesis."""
+def _run_math_scout(state: ResearchState) -> ResearchState:
+    return _math_scout.run(state)
 
-    surah_refs: list[int]
-    """Surah numbers (1-indexed) that this hypothesis references."""
+def _run_freq_scout(state: ResearchState) -> ResearchState:
+    return _freq_scout.run(state)
 
-    score: float = 0.0
-    """Occam-penalised score assigned by the Scorer node. Default 0 until scored."""
+def _run_deep_scout(state: ResearchState) -> ResearchState:
+    return _deep_scout.run(state)
 
-    fingerprint: str = ""
-    """
-    Short hash/slug used by the Knowledge Graph to detect duplicate or similar findings.
-    Set by the KnowledgeGraphLinker node.
-    """
+def _run_the_fool(state: ResearchState) -> ResearchState:
+    return _the_fool.run(state)
 
-    layer: str = "rasm"
-    """
-    Which text layer this hypothesis operates on: 'rasm' or 'tashkeel'.
-    Enforces Dual-Matrix Purity — checked by The Fool.
-    """
-
-    def __post_init__(self) -> None:
-        # Validate required string fields are non-empty
-        if not self.source_scout.strip():
-            raise ValueError("Hypothesis.source_scout must not be empty.")
-        if not self.goal_link.strip():
-            raise ValueError(
-                "Hypothesis.goal_link must not be empty. "
-                "Every hypothesis must explain how it contributes to discovering "
-                "the meaning of the Muqattaat."
-            )
-        if not self.description.strip():
-            raise ValueError("Hypothesis.description must not be empty.")
-        if self.transformation_steps < 0:
-            raise ValueError("Hypothesis.transformation_steps must be >= 0.")
-        if not self.evidence_snippets:
-            raise ValueError(
-                "Hypothesis.evidence_snippets must contain at least one entry."
-            )
-        if not self.surah_refs:
-            raise ValueError(
-                "Hypothesis.surah_refs must reference at least one Surah."
-            )
-        if self.layer not in ("rasm", "tashkeel"):
-            raise ValueError(
-                f"Hypothesis.layer must be 'rasm' or 'tashkeel', got '{self.layer}'."
-            )
+def _run_synthesizer(state: ResearchState) -> ResearchState:
+    return _synthesizer.run(state)
 
 
-@dataclass
-class RejectedHypothesis:
-    """A hypothesis that The Fool has rejected, stored with the reason."""
+# ── Graph builder ─────────────────────────────────────────────────────────────
 
-    hypothesis: Hypothesis
-    reason: str
-    auditor: str = "TheFool"
+def build_graph() -> StateGraph:
+    graph = StateGraph(ResearchState)
+
+    graph.add_node("ingestion", _run_ingestion)
+    graph.add_node("micro_scout", _run_micro_scout)
+    graph.add_node("static_scout", _run_static_scout)
+    graph.add_node("linguistic_scout", _run_linguistic_scout)
+    graph.add_node("symbolic_scout", _run_symbolic_scout)
+    graph.add_node("math_scout", _run_math_scout)
+    graph.add_node("freq_scout", _run_freq_scout)
+    graph.add_node("deep_scout", _run_deep_scout)
+    graph.add_node("the_fool", _run_the_fool)
+    graph.add_node("synthesizer", _run_synthesizer)
+
+    graph.set_entry_point("ingestion")
+    graph.add_edge("ingestion", "micro_scout")
+    graph.add_edge("micro_scout", "static_scout")
+    graph.add_edge("static_scout", "linguistic_scout")
+    graph.add_edge("linguistic_scout", "symbolic_scout")
+    graph.add_edge("symbolic_scout", "math_scout")
+    graph.add_edge("math_scout", "freq_scout")
+    graph.add_edge("freq_scout", "deep_scout")
+    graph.add_edge("deep_scout", "the_fool")
+    graph.add_edge("the_fool", "synthesizer")
+    graph.add_edge("synthesizer", END)
+
+    return graph
 
 
-class ResearchState(TypedDict, total=False):
-    """
-    Shared memory dict passed between all nodes in the LangGraph state machine.
-
-    Keys are written by specific nodes only — no agent modifies another agent's key.
-    """
-
-    # ── Ingestion outputs ────────────────────────────────────────────────────
-    surah_numbers: list[int]
-    """Surah numbers selected for this run."""
-
-    rasm_matrices: dict[int, list[str]]
-    """
-    Layer A — skeletal (Rasm) letter sequences, keyed by Surah number.
-    Rasm scouts ONLY read from this key.
-    """
-
-    tashkeel_matrices: dict[int, list[str]]
-    """
-    Layer B — diacritic (Tashkeel) overlays, keyed by Surah number.
-    Tashkeel scouts ONLY read from this key.
-    """
-
-    muqattaat_map: dict[int, str]
-    """
-    Maps Surah number → its Muqattaat sequence string (e.g. {2: 'الم'}).
-    Only populated for Surahs that open with Muqattaat.
-    """
-
-    known_dead_ends: list[str]
-    """
-    Fingerprints of paths already proven dead, loaded from the Knowledge Graph
-    before scouts run. Scouts should skip any path whose fingerprint appears here.
-    """
-
-    raw_text: dict[int, str]
-    """Original Uthmani text per Surah, before any processing."""
-
-    # ── Scout outputs ────────────────────────────────────────────────────────
-    raw_hypotheses: list[Hypothesis]
-    """
-    All hypotheses produced by Scout agents. Each Scout APPENDS to this list.
-    No scout may modify another scout's entries.
-    """
-
-    # ── Auditor outputs ──────────────────────────────────────────────────────
-    survivor_hypotheses: list[Hypothesis]
-    """Hypotheses that passed The Fool's interrogation."""
-
-    rejected_hypotheses: list[RejectedHypothesis]
-    """Hypotheses rejected by The Fool, with reasons. Written by TheFool only."""
-
-    # ── Synthesizer outputs ──────────────────────────────────────────────────
-    synthesized_theories: list[Hypothesis]
-    """
-    Merged / cross-scout theories produced by the Synthesizer.
-    Each entry may combine evidence from multiple survivor hypotheses.
-    """
-
-    # ── Scorer outputs ───────────────────────────────────────────────────────
-    scored_theories: list[Hypothesis]
-    """Synthesized theories with `.score` populated by the Occam Scorer."""
-
-    # ── Knowledge Graph outputs ──────────────────────────────────────────────
-    graph_save_status: str
-    """'OK' or error message from the KnowledgeGraphLinker node."""
-
-    # ── Run metadata ─────────────────────────────────────────────────────────
-    focus: str
-    """Run focus mode, e.g. 'muqattaat'."""
-
-    errors: list[str]
-    """Non-fatal errors accumulated during the run."""
+def compile_graph():
+    return build_graph().compile()
