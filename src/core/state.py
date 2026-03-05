@@ -1,137 +1,168 @@
-"""
-src/core/state.py
-─────────────────
-Central shared memory object (ResearchState) passed through the entire
-LangGraph pipeline. Every agent reads from and writes to this structure.
-
-PRIMARY GOAL: Discover the meaning of the Muqattaat (Disjointed Letters).
-All hypotheses MUST link back to this goal via `goal_link`.
-"""
+# src/core/state.py
+# ResearchState TypedDict and Hypothesis dataclass for the Muqattaat Cryptanalytic Lab
 
 from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import Any, TypedDict
-import unicodedata
+from typing import TypedDict
 
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Hypothesis — the atomic unit of discovery
-# ──────────────────────────────────────────────────────────────────────────────
 
 @dataclass
 class Hypothesis:
     """
-    An observation produced by a Scout agent.
+    A single research hypothesis produced by a Scout agent.
 
-    Every hypothesis MUST have a non-empty `goal_link` that explains
-    how this finding contributes to understanding the Muqattaat.
-    The Fool will reject any hypothesis with a missing or generic goal_link.
+    All fields are required. `goal_link` must be a non-empty, specific sentence
+    explaining how this finding contributes to discovering the meaning of the Muqattaat.
+    The Fool will reject any Hypothesis where goal_link is empty or generic.
     """
-    source_scout: str                      # Which scout generated this
-    goal_link: str                         # How does this help decode Muqattaat?
-    description: str                       # Human-readable finding
-    transformation_steps: int             # How many logical steps to reach this
-    evidence_snippets: list[str] = field(default_factory=list)  # Raw evidence
-    surah_refs: list[int] = field(default_factory=list)          # Surah numbers
-    score: float = 0.0                     # Filled by Occam Scorer
-    metadata: dict[str, Any] = field(default_factory=dict)
 
-    def __post_init__(self):
+    source_scout: str
+    """Name of the Scout agent that produced this hypothesis."""
+
+    goal_link: str
+    """
+    Plain-English sentence explaining how this finding contributes to discovering
+    the meaning of the Muqattaat. Must be specific — not generic boilerplate.
+    """
+
+    description: str
+    """Human-readable summary of what was found."""
+
+    transformation_steps: int
+    """
+    Number of logical operations / transformations applied to reach this hypothesis.
+    Feeds directly into the Occam penalty: score *= exp(-0.15 * transformation_steps).
+    """
+
+    evidence_snippets: list[str]
+    """Raw data excerpts, counts, or quotes that support this hypothesis."""
+
+    surah_refs: list[int]
+    """Surah numbers (1-indexed) that this hypothesis references."""
+
+    score: float = 0.0
+    """Occam-penalised score assigned by the Scorer node. Default 0 until scored."""
+
+    fingerprint: str = ""
+    """
+    Short hash/slug used by the Knowledge Graph to detect duplicate or similar findings.
+    Set by the KnowledgeGraphLinker node.
+    """
+
+    layer: str = "rasm"
+    """
+    Which text layer this hypothesis operates on: 'rasm' or 'tashkeel'.
+    Enforces Dual-Matrix Purity — checked by The Fool.
+    """
+
+    def __post_init__(self) -> None:
+        # Validate required string fields are non-empty
+        if not self.source_scout.strip():
+            raise ValueError("Hypothesis.source_scout must not be empty.")
         if not self.goal_link.strip():
             raise ValueError(
-                f"Hypothesis from {self.source_scout} is missing goal_link. "
-                "Every hypothesis MUST explain its connection to the Muqattaat."
+                "Hypothesis.goal_link must not be empty. "
+                "Every hypothesis must explain how it contributes to discovering "
+                "the meaning of the Muqattaat."
+            )
+        if not self.description.strip():
+            raise ValueError("Hypothesis.description must not be empty.")
+        if self.transformation_steps < 0:
+            raise ValueError("Hypothesis.transformation_steps must be >= 0.")
+        if not self.evidence_snippets:
+            raise ValueError(
+                "Hypothesis.evidence_snippets must contain at least one entry."
+            )
+        if not self.surah_refs:
+            raise ValueError(
+                "Hypothesis.surah_refs must reference at least one Surah."
+            )
+        if self.layer not in ("rasm", "tashkeel"):
+            raise ValueError(
+                f"Hypothesis.layer must be 'rasm' or 'tashkeel', got '{self.layer}'."
             )
 
 
 @dataclass
 class RejectedHypothesis:
-    """Record of a hypothesis The Fool destroyed — saved as a Negative Node."""
-    original: Hypothesis
-    rejection_reason: str
-    fool_question: str  # The basic question that killed it
+    """A hypothesis that The Fool has rejected, stored with the reason."""
 
+    hypothesis: Hypothesis
+    reason: str
+    auditor: str = "TheFool"
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Dual-Layer Text Matrices
-# ──────────────────────────────────────────────────────────────────────────────
-
-@dataclass
-class RasmMatrix:
-    """
-    Layer A — The Foundational Skeleton.
-    Pure skeletal Arabic letters, all diacritics stripped.
-    Fed ONLY to: MathScout, SymbolicScout, MicroScout, StaticScout, FreqScout.
-    """
-    surah_number: int
-    raw_rasm: str                          # Cleaned skeletal text
-    letter_sequence: list[str]            # Individual letter tokens
-    is_surah_start: bool = False
-    isolated_sequences: list[str] = field(default_factory=list)  # Muqattaat
-    is_muqattaat_surah: bool = False
-
-
-@dataclass
-class TashkeelMatrix:
-    """
-    Layer B — The Phonetic Overlay.
-    Diacritics (Fatha, Kasra, Damma, Sukun, Shadda) mapped by position.
-    Fed ONLY to: LinguisticScout, DeepScout.
-    """
-    surah_number: int
-    diacritic_map: dict[int, str]         # position → diacritic char
-    syllable_structure: list[str]         # Derived syllable tokens
-    phonetic_rhythm: str                  # Compact rhythm string (C/V pattern)
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# ResearchState — the pipeline's shared memory
-# ──────────────────────────────────────────────────────────────────────────────
 
 class ResearchState(TypedDict, total=False):
     """
-    The single object passed between all nodes in the LangGraph pipeline.
+    Shared memory dict passed between all nodes in the LangGraph state machine.
 
-    KEY SECTIONS:
-    ─────────────
-    input_*          Raw inputs
-    rasm_matrices    Layer A data (skeletal)
-    tashkeel_matrices Layer B data (phonetic)
-    raw_hypotheses   All Scout outputs (pre-Fool)
-    survivor_hypotheses Hypotheses that passed The Fool
-    rejected_hypotheses Dead-ends saved as Negative Nodes
-    synthesized_theories Cross-scout merged findings
-    scored_theories  Final ranked theories
-    graph_nodes      What was written to the knowledge graph this run
-    lab_report       Final human-readable output
+    Keys are written by specific nodes only — no agent modifies another agent's key.
     """
 
-    # ── Input ──────────────────────────────────────────────────────────────
-    input_surah_numbers: list[int]         # Which Surahs to analyze
-    input_focus: str                       # "muqattaat" | "full_surah" | "comparison"
+    # ── Ingestion outputs ────────────────────────────────────────────────────
+    surah_numbers: list[int]
+    """Surah numbers selected for this run."""
 
-    # ── Processed layers ───────────────────────────────────────────────────
-    rasm_matrices: dict[int, RasmMatrix]        # surah_num → RasmMatrix
-    tashkeel_matrices: dict[int, TashkeelMatrix]  # surah_num → TashkeelMatrix
-    muqattaat_registry: dict[int, str]           # surah_num → Muqattaat string
+    rasm_matrices: dict[int, list[str]]
+    """
+    Layer A — skeletal (Rasm) letter sequences, keyed by Surah number.
+    Rasm scouts ONLY read from this key.
+    """
 
-    # ── Scout working memory (each scout appends here) ─────────────────────
+    tashkeel_matrices: dict[int, list[str]]
+    """
+    Layer B — diacritic (Tashkeel) overlays, keyed by Surah number.
+    Tashkeel scouts ONLY read from this key.
+    """
+
+    muqattaat_map: dict[int, str]
+    """
+    Maps Surah number → its Muqattaat sequence string (e.g. {2: 'الم'}).
+    Only populated for Surahs that open with Muqattaat.
+    """
+
+    known_dead_ends: list[str]
+    """
+    Fingerprints of paths already proven dead, loaded from the Knowledge Graph
+    before scouts run. Scouts should skip any path whose fingerprint appears here.
+    """
+
+    raw_text: dict[int, str]
+    """Original Uthmani text per Surah, before any processing."""
+
+    # ── Scout outputs ────────────────────────────────────────────────────────
     raw_hypotheses: list[Hypothesis]
+    """
+    All hypotheses produced by Scout agents. Each Scout APPENDS to this list.
+    No scout may modify another scout's entries.
+    """
 
-    # ── The Fool output ────────────────────────────────────────────────────
+    # ── Auditor outputs ──────────────────────────────────────────────────────
     survivor_hypotheses: list[Hypothesis]
+    """Hypotheses that passed The Fool's interrogation."""
+
     rejected_hypotheses: list[RejectedHypothesis]
+    """Hypotheses rejected by The Fool, with reasons. Written by TheFool only."""
 
-    # ── Synthesizer output ─────────────────────────────────────────────────
+    # ── Synthesizer outputs ──────────────────────────────────────────────────
     synthesized_theories: list[Hypothesis]
+    """
+    Merged / cross-scout theories produced by the Synthesizer.
+    Each entry may combine evidence from multiple survivor hypotheses.
+    """
 
-    # ── Occam Scorer output ────────────────────────────────────────────────
+    # ── Scorer outputs ───────────────────────────────────────────────────────
     scored_theories: list[Hypothesis]
+    """Synthesized theories with `.score` populated by the Occam Scorer."""
 
-    # ── Knowledge Graph tracking ───────────────────────────────────────────
-    graph_nodes: list[dict[str, Any]]      # Nodes written this run
-    known_dead_ends: list[str]             # Dead-end fingerprints from graph DB
+    # ── Knowledge Graph outputs ──────────────────────────────────────────────
+    graph_save_status: str
+    """'OK' or error message from the KnowledgeGraphLinker node."""
 
-    # ── Final output ───────────────────────────────────────────────────────
-    lab_report: dict[str, Any]
-    run_id: str                            # UUID for this analysis run
+    # ── Run metadata ─────────────────────────────────────────────────────────
+    focus: str
+    """Run focus mode, e.g. 'muqattaat'."""
+
+    errors: list[str]
+    """Non-fatal errors accumulated during the run."""

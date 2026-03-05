@@ -1,81 +1,162 @@
-"""
-src/core/scorer.py
-──────────────────
-Occam's Razor evaluation function.
-
-Formula:
-    score = evidence_weight * exp(-λ * transformation_steps)
-
-λ (lambda) default = 0.15
-A theory requiring >5 transformations scores below 0.47 regardless of evidence.
-This mathematically forces the system to favor simple, elegant truths.
-
-PRIMARY GOAL ALIGNMENT:
-The scorer adds a `goal_alignment_bonus` when a hypothesis directly
-addresses the Muqattaat's meaning (not just statistical patterns around them).
-"""
+# src/core/scorer.py
+# Occam Razor scoring for the Muqattaat Cryptanalytic Lab
 
 from __future__ import annotations
+
 import math
+from typing import Sequence
+
 from src.core.state import Hypothesis
 
-# ── Tuning constants ──────────────────────────────────────────────────────────
-LAMBDA: float = 0.15          # Complexity penalty decay rate
-GOAL_BONUS: float = 0.20      # Bonus for direct Muqattaat meaning hypothesis
-MAX_EVIDENCE_WEIGHT: float = 1.0
+# ── Constants ────────────────────────────────────────────────────────────────
+
+LAMBDA: float = 0.15
+"""
+Occam complexity penalty rate. Non-negotiable per CONVENTIONS.md.
+A theory needing >5 transformations starts below 0.47 regardless of evidence.
+"""
+
+GOAL_ALIGNMENT_BONUS: float = 0.10
+"""
+Bonus added when a hypothesis explicitly targets the Muqattaat sequences
+(i.e. surah_refs overlap with known Muqattaat Surahs and goal_link mentions
+specific letter sequences).
+"""
+
+# The 29 Surahs that open with Muqattaat sequences.
+MUQATTAAT_SURAH_NUMBERS: frozenset[int] = frozenset(
+    [2, 3, 7, 10, 11, 12, 13, 14, 15, 19, 20, 26, 27, 28, 29, 30, 31, 32,
+     36, 38, 40, 41, 42, 43, 44, 45, 46, 50, 68]
+)
+
+# Keywords that indicate a goal_link is specifically about the Muqattaat.
+_MUQATTAAT_KEYWORDS: tuple[str, ...] = (
+    "muqattaat", "isolated letter", "disjointed letter", "الحروف المقطعة",
+    "alif lam mim", "alm", "alr", "alms", "ha mim", "ya sin", "ta ha",
+    "phonetic key", "consonantal", "letter sequence", "opening letter",
+)
 
 
-# ── Keyword signals that a hypothesis directly addresses Muqattaat meaning ────
-DIRECT_MEANING_SIGNALS = [
-    "meaning of", "stands for", "abbreviation", "cipher key",
-    "decode", "represents", "symbolic of", "geometric key",
-    "phonetic key", "mathematical key", "numerical value",
-    "abjad", "letter name", "isolated letter"
-]
+# ── Core formula ─────────────────────────────────────────────────────────────
 
+def occam_score(
+    evidence_weight: float,
+    transformation_steps: int,
+    goal_alignment_bonus: float = 0.0,
+) -> float:
+    """
+    Compute the Occam-penalised score for a hypothesis.
+
+    Formula (from CONVENTIONS.md):
+        score = evidence_weight * exp(-λ * transformation_steps) + bonus
+
+    Args:
+        evidence_weight: A value in [0.0, 1.0] representing how strong the
+            evidence is. 1.0 = maximally supported, 0.0 = no evidence.
+        transformation_steps: Number of logical operations applied. More steps
+            → heavier penalty.
+        goal_alignment_bonus: Extra credit for hypotheses that directly target
+            the Muqattaat. Added AFTER the exponential penalty.
+
+    Returns:
+        Float score. Typically in [0.0, 1.1] but not clamped — callers may
+        normalise if needed.
+    """
+    if not (0.0 <= evidence_weight <= 1.0):
+        raise ValueError(
+            f"evidence_weight must be in [0.0, 1.0], got {evidence_weight}."
+        )
+    if transformation_steps < 0:
+        raise ValueError(
+            f"transformation_steps must be >= 0, got {transformation_steps}."
+        )
+
+    penalty = math.exp(-LAMBDA * transformation_steps)
+    return evidence_weight * penalty + goal_alignment_bonus
+
+
+# ── Evidence weight helpers ───────────────────────────────────────────────────
 
 def compute_evidence_weight(hypothesis: Hypothesis) -> float:
     """
-    Estimate evidence weight from 0.0 to 1.0 based on:
-    - Number of evidence snippets
-    - Number of Surah references (cross-Surah = stronger)
-    - Whether it has both Rasm + phonetic corroboration (metadata flag)
+    Derive an evidence_weight in [0.0, 1.0] from a Hypothesis.
+
+    Heuristic rules (can be refined as the lab matures):
+    - Base weight = min(len(evidence_snippets) / 5, 1.0)
+      (5 or more distinct snippets → full weight)
+    - Penalty if description == goal_link (circular reasoning)
+    - Bonus if surah_refs are all Muqattaat Surahs
     """
-    snippet_score = min(len(hypothesis.evidence_snippets) / 5.0, 0.6)
-    surah_score = min(len(set(hypothesis.surah_refs)) / 10.0, 0.3)
-    dual_layer_bonus = 0.1 if hypothesis.metadata.get("dual_layer_corroborated") else 0.0
-    return round(snippet_score + surah_score + dual_layer_bonus, 4)
+    base = min(len(hypothesis.evidence_snippets) / 5.0, 1.0)
+
+    # Penalise circular hypotheses (description mirrors goal_link)
+    if hypothesis.description.strip() == hypothesis.goal_link.strip():
+        base *= 0.5
+
+    # Bonus if all referenced Surahs are Muqattaat Surahs
+    if hypothesis.surah_refs and all(
+        s in MUQATTAAT_SURAH_NUMBERS for s in hypothesis.surah_refs
+    ):
+        base = min(base + 0.1, 1.0)
+
+    return base
 
 
-def goal_alignment_bonus(hypothesis: Hypothesis) -> float:
+def compute_goal_alignment_bonus(hypothesis: Hypothesis) -> float:
     """
-    Add a bonus if the hypothesis directly targets Muqattaat meaning discovery.
-    Checks both description and goal_link for signal words.
+    Return GOAL_ALIGNMENT_BONUS if the hypothesis goal_link explicitly
+    references Muqattaat concepts, else 0.0.
     """
-    combined = (hypothesis.description + hypothesis.goal_link).lower()
-    if any(signal in combined for signal in DIRECT_MEANING_SIGNALS):
-        return GOAL_BONUS
+    goal_lower = hypothesis.goal_link.lower()
+    if any(kw in goal_lower for kw in _MUQATTAAT_KEYWORDS):
+        return GOAL_ALIGNMENT_BONUS
     return 0.0
 
 
-def score_hypothesis(hypothesis: Hypothesis, lam: float = LAMBDA) -> Hypothesis:
-    """
-    Apply the Occam Razor formula and write the score back onto the hypothesis.
+# ── Scorer entry point ────────────────────────────────────────────────────────
 
-    score = evidence_weight * exp(-λ * steps) + goal_alignment_bonus
-    Capped at 1.0.
+def score_hypothesis(hypothesis: Hypothesis) -> Hypothesis:
+    """
+    Score a single Hypothesis in-place (mutates `.score`) and return it.
+
+    Steps:
+    1. Compute evidence_weight from evidence_snippets and metadata.
+    2. Compute goal_alignment_bonus.
+    3. Apply occam_score formula.
+    4. Store result in hypothesis.score.
     """
     ew = compute_evidence_weight(hypothesis)
-    steps = max(hypothesis.transformation_steps, 0)
-    complexity_penalty = math.exp(-lam * steps)
-    bonus = goal_alignment_bonus(hypothesis)
-
-    raw_score = (ew * complexity_penalty) + bonus
-    hypothesis.score = round(min(raw_score, 1.0), 4)
+    bonus = compute_goal_alignment_bonus(hypothesis)
+    hypothesis.score = occam_score(
+        evidence_weight=ew,
+        transformation_steps=hypothesis.transformation_steps,
+        goal_alignment_bonus=bonus,
+    )
     return hypothesis
 
 
-def rank_theories(theories: list[Hypothesis]) -> list[Hypothesis]:
-    """Return theories sorted descending by score."""
-    scored = [score_hypothesis(h) for h in theories]
-    return sorted(scored, key=lambda h: h.score, reverse=True)
+def rank_theories(theories: Sequence[Hypothesis]) -> list[Hypothesis]:
+    """
+    Return a new list of Hypothesis objects sorted by score descending.
+
+    Args:
+        theories: Any sequence of scored Hypothesis instances.
+
+    Returns:
+        List sorted highest score first.
+    """
+    return sorted(theories, key=lambda h: h.score, reverse=True)
+
+
+def score_all(hypotheses: Sequence[Hypothesis]) -> list[Hypothesis]:
+    """
+    Score every hypothesis in the sequence and return them ranked.
+
+    Args:
+        hypotheses: Unscored (or partially scored) Hypothesis instances.
+
+    Returns:
+        All hypotheses with `.score` populated, sorted descending by score.
+    """
+    scored = [score_hypothesis(h) for h in hypotheses]
+    return rank_theories(scored)
