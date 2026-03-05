@@ -7,20 +7,16 @@ from typing import Sequence
 from src.core.state import ResearchState, Hypothesis
 from src.data.neon_db import NeonDB
 
-# Initialize the global DB instance for the scorer
-_neon_db = NeonDB()
-
-def compute_evidence_weight(hypothesis: Hypothesis) -> float:
+def occam_score(hypothesis: Hypothesis) -> float:
     """
-    Derive an evidence_weight in [0.0, 1.0] from a Hypothesis.
+    Compute the Occam score for a given Hypothesis.
 
     Heuristic rules (can be refined as the lab matures):
-    - Base weight = min(len(evidence_snippets) / 5, 1.0)
-      (5 or more distinct snippets → full weight)
+    - Base score = 1.0 / (transformation_steps + 1)
     - Penalty if description == goal_link (circular reasoning)
     - Bonus if surah_refs are all Muqattaat Surahs
     """
-    base = min(len(hypothesis.evidence_snippets) / 5.0, 1.0)
+    base = 1.0 / (hypothesis.transformation_steps + 1)
 
     # Check if the hypothesis goal_link contains any "Meaning Anchors"
     if any(keyword in hypothesis.goal_link.lower() for keyword in ["muqattaat dna", "jeddah coordinates", "dna base pairs"]):
