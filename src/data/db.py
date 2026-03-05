@@ -80,6 +80,15 @@ class NeonLabAPI:
                 ON CONFLICT DO UPDATE SET probability_weight = EXCLUDED.probability_weight
             """, (from_l, to_l, weight))
 
+    def create_ticket(self, ticket_id: str, role: str, pattern: str):
+        """Creates a new ticket in the database."""
+        with self.conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO c2_research_ticket (ticket_id, agent_role, target_pattern, status)
+                VALUES (%s, %s, %s, 'Executing')
+            """, (ticket_id, role, pattern))
+        self.conn.commit()
+
 def init_db_schema():
     """Initializes the multi-domain schema in Neon."""
     conn = get_db_connection()
