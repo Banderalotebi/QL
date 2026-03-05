@@ -98,3 +98,34 @@ class KnowledgeGraphLinker:
 
     def get_dead_end_fingerprints(self) -> list[str]:
         return self._graph.get("dead_end_fingerprints", [])
+from src.core.state import ResearchState
+
+class KnowledgeGraphLinker:
+    """Knowledge graph interface for storing and retrieving research findings."""
+    
+    def __init__(self):
+        self.dead_ends = []  # Simple in-memory storage for now
+    
+    def get_dead_end_fingerprints(self) -> list[str]:
+        """Return list of fingerprints for known dead-end hypotheses."""
+        return self.dead_ends.copy()
+    
+    def run(self, state: ResearchState) -> ResearchState:
+        """Save findings to knowledge graph."""
+        # Store rejected hypotheses as dead ends
+        rejected = state.get("rejected_hypotheses", [])
+        for r in rejected:
+            if r.hypothesis.fingerprint:
+                self.dead_ends.append(r.hypothesis.fingerprint)
+        
+        # Generate fingerprints for scored theories (simple hash of key fields)
+        scored_theories = state.get("scored_theories", [])
+        for theory in scored_theories:
+            if not theory.fingerprint:
+                # Simple fingerprint: hash of goal_link + description
+                import hashlib
+                content = f"{theory.goal_link}:{theory.description}"
+                theory.fingerprint = hashlib.md5(content.encode()).hexdigest()[:8]
+        
+        state["graph_save_status"] = "OK"
+        return state
