@@ -1,61 +1,76 @@
 # src/core/leaders.py
-# Dual-leadership supervisors for the Muqattaat Cryptanalytic Lab
-
-from __future__ import annotations
-
 from src.core.state import ResearchState
-from src.agents.micro_scout import MicroScout
-from src.agents.static_scout import StaticScout
-from src.agents.linguistic_scout import LinguisticScout
-from src.agents.symbolic_scout import SymbolicScout
-from src.agents.math_scout import MathScout
-from src.agents.freq_scout import FreqScout
-from src.agents.deep_scout import DeepScout
-from src.agents.the_fool import TheFool
-from src.agents.synthesizer import Synthesizer
-
-class ExecutionerLeader:
-    """
-    Executioner leader that monitors performance metrics from scorer.py.
-    If scores drop below 0.85, trigger a "Factory Spawn" for a new specialist agent.
-    """
-    
-    def run(self, state: ResearchState) -> ResearchState:
-        """
-        Monitor performance metrics and trigger factory spawn if necessary.
-        """
-        # Implement dynamic respawning of Scouts with modified prompts
-        # Get the current scores from the scorer
-        scores = state.get("scores", [])
-        
-        # Check if any scores are below 0.85
-        if any(score < 0.85 for score in scores):
-            # Trigger factory spawn for a new specialist agent
-            # Create a new MicroScout with a modified prompt
-            new_scout = MicroScout(prompt="Modified prompt")
-            # Add the new scout to the state
-            state["scouts"].append(new_scout)
-        
-        return state
+from langchain_ollama import ChatOllama
 
 class AlchemistLeader:
     """
-    Alchemist leader that audits goal_link fields to ensure they connect to "Meaning Anchors" like Muqattaat DNA or astronomical coordinates.
+    The Meaning CEO. 
+    Anchors theories to physical/biological realities (Coordinates, DNA, Mathematics)
+    and rewards them with Occam's score boosts.
     """
-    
-    def run(self, state: ResearchState) -> ResearchState:
-        """
-        Audit goal_link fields and update state accordingly.
-        """
-        # Implement reward mechanism for hypotheses that map letters to physical, geographical, or biological realities
-        # Get the current hypotheses from the state
-        hypotheses = state.get("hypotheses", [])
+    def __init__(self):
+        # Temperature is slightly higher (0.4) for lateral thinking
+        self.llm = ChatOllama(
+            model="llama3:8b",
+            temperature=0.4,
+            num_predict=-1,
+            num_ctx=8192
+        )
+
+    def run(self, state: ResearchState) -> dict:
+        # Pull theories from synthesizer or directly from survivors
+        theories = state.get("synthesized_theories", state.get("survivor_hypotheses", []))
+        if not theories:
+            return {}
+
+        enhanced_theories = []
+        for hyp in theories:
+            prompt = f"""
+            You are the Alchemist Leader (Meaning CEO) of the Muqattaat Lab.
+            Your objective is to find connections between abstract cryptographic theories and physical reality 
+            (e.g., the coordinates of Jeddah/Makkah, DNA base pairs, human biology, celestial mechanics).
+            
+            CURRENT SURVIVING THEORY:
+            Scout: {hyp.source_scout}
+            Goal: {hyp.goal_link}
+            Description: {hyp.description}
+            
+            TASK:
+            Is there a brilliant, lateral-thinking connection between this theory and a known physical/biological reality?
+            If YES, provide a short paragraph explaining the connection and end exactly with "REWARD: ALCHEMIST".
+            If NO, provide a brief critique and end exactly with "REWARD: NONE".
+            """
+            try:
+                response = self.llm.invoke(prompt)
+                content = response.content.strip()
+                
+                if "REWARD: ALCHEMIST" in content.upper():
+                    # Massive score boost for anchoring in reality
+                    hyp.score = min(1.0, hyp.score + 0.3)
+                    hyp.description += f"\n\n[Alchemist Anchor]: {content}"
+                
+                enhanced_theories.append(hyp)
+            except Exception as e:
+                pass
+                
+        # Upgrade the final scored list
+        return {"scored_theories": enhanced_theories}
+
+
+class ExecutionerLeader:
+    """
+    The Results CEO.
+    Acts as a conditional router in the LangGraph. 
+    If results are 0, it skips to the end (or triggers respawns later).
+    """
+    @staticmethod
+    def route(state: ResearchState) -> str:
+        # Check if any hypotheses survived the strict Fool / Synthesizer phase
+        survivors = state.get("synthesized_theories", state.get("survivor_hypotheses", []))
         
-        # Iterate over the hypotheses
-        for hypothesis in hypotheses:
-            # Check if the goal_link field contains any "Meaning Anchors"
-            if any(keyword in hypothesis.goal_link.lower() for keyword in ["muqattaat dna", "jeddah coordinates", "dna base pairs"]):
-                # Reward the hypothesis with a bonus score
-                hypothesis.score += 0.1
-        
-        return state
+        if len(survivors) > 0:
+            print(f"\n[Executioner]: {len(survivors)} theories passed. Routing to Alchemist (Meaning CEO).")
+            return "alchemist"
+            
+        print("\n[Executioner]: 0 theories survived. Routing directly to final report.")
+        return "report_builder"

@@ -5,8 +5,10 @@ from src.core.state import ResearchState
 from src.core.state_definitions import (
     _run_ingestion, _run_micro_scout, _run_static_scout,
     _run_linguistic_scout, _run_symbolic_scout, _run_math_scout,
-    _run_freq_scout, _run_deep_scout, _run_the_fool, _run_synthesizer
+    _run_freq_scout, _run_deep_scout, _run_the_fool, _run_synthesizer,
+    _run_alchemist
 )
+from src.core.leaders import ExecutionerLeader
 
 def _build_report(state: ResearchState) -> dict:
     """Compiles the final metrics into the lab_report dict for main.py UI"""
@@ -46,6 +48,7 @@ def build_graph() -> StateGraph:
     graph.add_node("freq_scout", _run_freq_scout)
     graph.add_node("deep_scout", _run_deep_scout)
     graph.add_node("the_fool", _run_the_fool)
+    graph.add_node("alchemist", _run_alchemist)
     graph.add_node("synthesizer", _run_synthesizer)
     graph.add_node("report_builder", _build_report)
 
@@ -59,10 +62,17 @@ def build_graph() -> StateGraph:
     graph.add_edge("freq_scout", "deep_scout")
     graph.add_edge("deep_scout", "the_fool")
     graph.add_edge("the_fool", "synthesizer")
-    graph.add_edge("synthesizer", "report_builder")
+    graph.add_edge("synthesizer", "alchemist")
+    graph.add_edge("alchemist", "report_builder")
     graph.add_edge("report_builder", END)
 
-    return graph
+    graph.add_conditional_edges(
+        "synthesizer", 
+        ExecutionerLeader.route, 
+        {
+            "alchemist": "alchemist",
+            "report_builder": "report_builder"
+        }
+    )
 
-def compile_graph():
-    return build_graph().compile()
+    return graph

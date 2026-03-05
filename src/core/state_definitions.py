@@ -11,6 +11,7 @@ from src.agents.freq_scout import FreqScout
 from src.agents.deep_scout import DeepScout
 from src.agents.the_fool import TheFool
 from src.agents.synthesizer import Synthesizer
+from src.core.leaders import AlchemistLeader
 
 # ── Agent singletons ──────────────────────────────────────────────────────────
 _micro_scout = MicroScout()
@@ -22,6 +23,7 @@ _freq_scout = FreqScout()
 _deep_scout = DeepScout()
 _the_fool = TheFool()
 _synthesizer = Synthesizer()
+_alchemist_leader = AlchemistLeader()
 
 # ── Node wrappers ─────────────────────────────────────────────────────────────
 def _run_ingestion(state: ResearchState) -> ResearchState:
@@ -54,3 +56,6 @@ def _run_the_fool(state: ResearchState) -> ResearchState:
 
 def _run_synthesizer(state: ResearchState) -> ResearchState:
     return _synthesizer.run(state)
+
+def _run_alchemist(state: ResearchState) -> ResearchState:
+    return _alchemist_leader.run(state)
