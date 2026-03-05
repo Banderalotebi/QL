@@ -26,7 +26,7 @@ class TheFool:
                 h.score += 0.1
             
             # Check if the hypothesis fails to account for the Meccan/Medinan split or the Surah 68 "Literal Zone" cut-off
-            if (h.surah_refs not in MECCAN_MUQATTAAT and h.surah_refs not in MEDINAN_MUQATTAAT) or h.surah_refs > 68:
+            if (h.surah_refs not in state["MEDINAN_MUQATTAAT"] and h.surah_refs not in state["MECCAN_MUQATTAAT"]) or h.surah_refs > 68:
                 # Reject the hypothesis
                 rejected.append(RejectedHypothesis(
                     hypothesis=h,
