@@ -1,62 +1,31 @@
-from __future__ import annotations
+# src/core/state.py
+from typing import TypedDict, List, Dict, Any
+from dataclasses import dataclass, field
 
-from src.core.state_definitions import build_graph
-from src.agents.micro_scout import MicroScout
-from src.agents.static_scout import StaticScout
-from src.agents.linguistic_scout import LinguisticScout
-from src.agents.symbolic_scout import SymbolicScout
-from src.agents.math_scout import MathScout
-from src.agents.freq_scout import FreqScout
-from src.agents.deep_scout import DeepScout
-from src.agents.the_fool import TheFool
-from src.agents.synthesizer import Synthesizer
+@dataclass
+class Hypothesis:
+    source_scout: str
+    goal_link: str
+    transformation_steps: int
+    evidence_snippets: List[str]
+    description: str = ""
+    score: float = 0.0
+    surah_refs: List[int] = field(default_factory=list)
 
-_micro_scout = MicroScout()
-_static_scout = StaticScout()
-_linguistic_scout = LinguisticScout()
-_symbolic_scout = SymbolicScout()
-_math_scout = MathScout()
-_freq_scout = FreqScout()
-_deep_scout = DeepScout()
-_the_fool = TheFool()
-_synthesizer = Synthesizer()
-
-
-# ── Node wrappers ─────────────────────────────────────────────────────────────
-
-def _run_ingestion(state: ResearchState) -> ResearchState:
-    from src.data.ingestion import run_ingestion
-    return run_ingestion(state)
-
-def _run_micro_scout(state: ResearchState) -> ResearchState:
-    return _micro_scout.run(state)
-
-def _run_static_scout(state: ResearchState) -> ResearchState:
-    return _static_scout.run(state)
-
-def _run_linguistic_scout(state: ResearchState) -> ResearchState:
-    return _linguistic_scout.run(state)
-
-def _run_symbolic_scout(state: ResearchState) -> ResearchState:
-    return _symbolic_scout.run(state)
-
-def _run_math_scout(state: ResearchState) -> ResearchState:
-    return _math_scout.run(state)
-
-def _run_freq_scout(state: ResearchState) -> ResearchState:
-    return _freq_scout.run(state)
-
-def _run_deep_scout(state: ResearchState) -> ResearchState:
-    return _deep_scout.run(state)
-
-def _run_the_fool(state: ResearchState) -> ResearchState:
-    return _the_fool.run(state)
-
-def _run_synthesizer(state: ResearchState) -> ResearchState:
-    return _synthesizer.run(state)
-
-
-# ── Graph builder ─────────────────────────────────────────────────────────────
-
-def build_graph() -> StateGraph:
-    return src.core.state_definitions.build_graph()
+class ResearchState(TypedDict, total=False):
+    surah_numbers: List[int]
+    focus: str
+    raw_hypotheses: List[Hypothesis]
+    survivor_hypotheses: List[Hypothesis]
+    synthesized_theories: List[Hypothesis]
+    scored_theories: List[Hypothesis]
+    errors: List[str]
+    
+    # Required by main.py
+    input_surah_numbers: List[int]
+    input_focus: str
+    data_dir: str
+    run_id: str
+    known_dead_ends: List[Any]
+    rejected_hypotheses: List[Any]
+    lab_report: Dict[str, Any]
