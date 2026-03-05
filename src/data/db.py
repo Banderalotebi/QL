@@ -21,4 +21,6 @@ class NeonLabAPI:
     def sign_payload(self, payload, public_key):
         # Corrected indentation
         if public_key:
-            # ... rest of the code ...
+            # Corrected indentation
+            if public_key:
+                # ... rest of the code ...
