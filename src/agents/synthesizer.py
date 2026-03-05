@@ -19,4 +19,5 @@ class Synthesizer:
         # 3. Create composite theories
         
         state["synthesized_theories"] = survivors.copy()
+        print(f"Hey, I've combined the hypotheses into a unified theory!")
         return state
