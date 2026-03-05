@@ -16,36 +16,40 @@ from src.data.db import init_db_schema
 
 console = Console()
 
-def display_results(state: ResearchState):
+def display_results(state: ResearchState, top: int = None):
     """Display research results in a formatted table."""
     console.print("\n" + "="*80)
     console.print("📊 RESEARCH RESULTS", style="bold cyan")
     console.print("="*80 + "\n")
-    
+
     # Get ranked theories
     theories = state.get("ranked_theories", [])
-    
+
+    # Limit to top N if specified
+    if top is not None and top > 0:
+        theories = theories[:top]
+
     if theories:
         console.print("\n🏆 Top Theories (Ranked by Occam Score):", style="bold yellow")
-        
+
         table = Table(show_header=True, header_style="bold magenta")
         table.add_column("Rank", width=4)
         table.add_column("Scout", width=12)
         table.add_column("Score", width=6)
         table.add_column("Goal Link", width=60)
         table.add_column("Surahs", width=10)
-        
+
         for i, theory in enumerate(theories[:10], 1):
             goal_link = theory.goal_link[:57] + "..." if len(theory.goal_link) > 60 else theory.goal_link
             surah_refs = ", ".join(map(str, theory.surah_refs[:3]))
             if len(theory.surah_refs) > 3:
                 surah_refs += "..."
-            
+
             # Check for empty goal link - this is a bug if it happens
             if not goal_link.strip():
                 goal_link = "[ERROR: Empty Goal Link]"
                 console.print(f"🚨 BUG DETECTED: Theory {i} has empty goal_link!", style="bold red")
-            
+
             table.add_row(
                 str(i),
                 theory.source_scout,
@@ -53,9 +57,9 @@ def display_results(state: ResearchState):
                 goal_link,
                 surah_refs
             )
-        
+
         console.print(table)
-    
+
     # Display any errors
     errors = state.get("errors", [])
     if errors:
@@ -71,14 +75,14 @@ def main():
         help="Analyze all 29 Muqattaat Surahs"
     )
     parser.add_argument(
-        "--surahs", 
-        nargs="+", 
-        type=int, 
+        "--surahs",
+        nargs="+",
+        type=int,
         default=[2, 19, 36, 50, 68],
         help="Surah numbers to analyze (default: 2 19 36 50 68)"
     )
     parser.add_argument(
-        "--focus", 
+        "--focus",
         default="muqattaat",
         help="Research focus mode (default: muqattaat)"
     )
@@ -87,35 +91,41 @@ def main():
         default="/Users/bander/QL/data",
         help="Path to data directory"
     )
-    
+    parser.add_argument(
+        "--top",
+        type=int,
+        default=None,
+        help="Limit the number of top theories to display (e.g., --top 20)"
+    )
+
     args = parser.parse_args()
-    
+
     # Handle --all-muqattaat flag
     if args.all_muqattaat:
         args.surahs = list(MUQATTAAT_SURAH_NUMBERS)
         console.print(f"\n✨ Running analysis on all 29 Muqattaat Surahs!")
-    
+
     # Display header
     console.print(create_header_panel())
     display_dataset_overview()
-    
+
     # Validate Surah numbers
     invalid_surahs = [s for s in args.surahs if s not in MUQATTAAT_SURAH_NUMBERS]
     if invalid_surahs:
         console.print(f"\n⚠️  Warning: Surahs {invalid_surahs} do not contain Muqattaat", style="yellow")
         args.surahs = [s for s in args.surahs if s in MUQATTAAT_SURAH_NUMBERS]
-    
+
     if not args.surahs:
         console.print("❌ No valid Muqattaat Surahs selected!", style="bold red")
         return
-    
+
     console.print(f"\n🔍 Analyzing Surahs: {args.surahs}")
     console.print("🚀 Starting research pipeline...\n")
-    
+
     # Initialize database schema
     console.print("📦 Initializing database schema...")
     init_db_schema()
-    
+
     # Initialize state
     initial_state: ResearchState = {
         "surah_numbers": args.surahs,
@@ -123,15 +133,15 @@ def main():
         "raw_hypotheses": [],
         "errors": []
     }
-    
+
     # Compile and run the graph
     try:
         graph = compile_graph()
         final_state = graph.invoke(initial_state)
-        
-        # Display results
-        display_results(final_state)
-        
+
+        # Display results with optional top limit
+        display_results(final_state, top=args.top)
+
     except Exception as e:
         console.print(f"❌ Pipeline failed: {e}", style="bold red")
         raise
