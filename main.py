@@ -14,6 +14,7 @@ def main():
         # ... rest of the code ...
 
         # Add the following line to call the record_hypothesis function
+        hypothesis = "example_hypothesis"  # Define the hypothesis variable
         NeonLabAPI().record_hypothesis(hypothesis)
 
         # ... rest of the code ...
