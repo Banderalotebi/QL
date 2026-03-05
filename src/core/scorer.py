@@ -7,6 +7,8 @@ from typing import Sequence
 from src.core.state import ResearchState, Hypothesis
 from src.data.neon_db import NeonDB
 
+_neon_db = NeonDB()  # Add this line to import _neon_db
+
 def occam_score(hypothesis: Hypothesis) -> float:
     """
     Compute the Occam score for a given Hypothesis.
@@ -28,4 +30,3 @@ def occam_score(hypothesis: Hypothesis) -> float:
         return 0.0
 
     return base
-
