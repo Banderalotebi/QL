@@ -10,7 +10,10 @@ def main():
         # ... rest of the code ...
 
         # Add the following line to call the record_hypothesis function
-        hypothesis = "example_hypothesis"  # Define the hypothesis variable
-        NeonLabAPI().record_hypothesis(hypothesis)
+        try:
+            hypothesis = "example_hypothesis"  # Define the hypothesis variable
+            NeonLabAPI().record_hypothesis(hypothesis)
+        except Exception as e:
+            print(f"Error recording hypothesis: {e}")
 
         # ... rest of the code ...
