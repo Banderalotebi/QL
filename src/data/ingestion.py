@@ -1,4 +1,3 @@
-# src/data/ingestion.py (Snippet)
 from src.data.db import get_db_connection
 
 def load_surah_text(surah_number: int, script_type: str = "quran-simple-clean") -> str:
@@ -18,4 +17,3 @@ def load_surah_text(surah_number: int, script_type: str = "quran-simple-clean") 
         print(f"[DB Warning]: {e}. Falling back to local files.")
     
     # ... existing local file loading logic here ...
-

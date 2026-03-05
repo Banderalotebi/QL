@@ -1,4 +1,3 @@
-# src/utils/tools.py
 import sqlite3
 from src.utils.abjad import ABJAD
 
