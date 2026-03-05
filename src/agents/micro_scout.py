@@ -45,4 +45,3 @@ class MicroScout:
             new_hypotheses.append(hyp)
 
         return {"raw_hypotheses": new_hypotheses}
-

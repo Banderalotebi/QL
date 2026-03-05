@@ -1,3 +1,4 @@
+# src/core/state.py
 import operator
 from typing import TypedDict, List, Dict, Any, Annotated, Optional
 from dataclasses import dataclass, field

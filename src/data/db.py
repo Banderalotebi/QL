@@ -118,4 +118,3 @@ def init_db_schema():
     cur.close()
     conn.close()
     print("✅ Neon Lab Schema Initialized.")
-
