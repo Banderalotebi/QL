@@ -58,3 +58,56 @@ class LinguisticScout(BaseScout):
                     hypotheses.append(hypothesis)
         
         return hypotheses
+from src.agents.base_scout import BaseScout
+from src.core.state import ResearchState, Hypothesis
+
+class LinguisticScout(BaseScout):
+    """
+    Linguistic pattern analysis scout.
+    Analyzes phonetic and linguistic structures.
+    """
+    
+    name = "LinguisticScout"
+    consumes_rasm = True
+    consumes_tashkeel = True
+    
+    def analyze(self, state: ResearchState) -> list[Hypothesis]:
+        """
+        Analyze linguistic patterns in the text.
+        """
+        hypotheses = []
+        
+        rasm_matrices = state.get("rasm_matrices", {})
+        tashkeel_matrices = state.get("tashkeel_matrices", {})
+        muqattaat_map = state.get("muqattaat_map", {})
+        
+        for surah_num in rasm_matrices:
+            if surah_num not in muqattaat_map:
+                continue
+                
+            muqattaat = muqattaat_map[surah_num]
+            rasm_letters = rasm_matrices[surah_num]
+            
+            if not rasm_letters:
+                continue
+            
+            # Simple linguistic analysis: check for repeated patterns
+            unique_letters = set(rasm_letters)
+            muqattaat_letters = set(muqattaat)
+            
+            overlap = unique_letters.intersection(muqattaat_letters)
+            overlap_ratio = len(overlap) / len(muqattaat_letters) if muqattaat_letters else 0
+            
+            if overlap_ratio > 0.5:  # If more than 50% overlap
+                hypothesis = Hypothesis(
+                    source_scout=self.name,
+                    goal_link=f"Muqattaat letters {muqattaat} show {overlap_ratio:.1%} phonetic overlap with the letter inventory of Surah {surah_num}, indicating these isolated letters may represent the core phonetic signature of the chapter's linguistic content.",
+                    description=f"Phonetic overlap: {overlap_ratio:.1%} between Muqattaat and chapter letters",
+                    transformation_steps=2,
+                    evidence_snippets=[f"Overlap letters: {overlap}", f"Overlap ratio: {overlap_ratio:.3f}"],
+                    surah_refs=[surah_num],
+                    layer="rasm"
+                )
+                hypotheses.append(hypothesis)
+        
+        return hypotheses

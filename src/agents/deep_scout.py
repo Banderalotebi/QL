@@ -69,3 +69,59 @@ class DeepScout(BaseScout):
                 hypotheses.append(hypothesis)
         
         return hypotheses
+from src.agents.base_scout import BaseScout
+from src.core.state import ResearchState, Hypothesis
+
+class DeepScout(BaseScout):
+    """
+    Deep pattern analysis scout.
+    Performs complex multi-layer analysis.
+    """
+    
+    name = "DeepScout"
+    consumes_rasm = True
+    consumes_tashkeel = True
+    
+    def analyze(self, state: ResearchState) -> list[Hypothesis]:
+        """
+        Perform deep analysis combining multiple layers.
+        """
+        hypotheses = []
+        
+        rasm_matrices = state.get("rasm_matrices", {})
+        tashkeel_matrices = state.get("tashkeel_matrices", {})
+        muqattaat_map = state.get("muqattaat_map", {})
+        
+        for surah_num in rasm_matrices:
+            if surah_num not in muqattaat_map:
+                continue
+                
+            muqattaat = muqattaat_map[surah_num]
+            rasm_letters = rasm_matrices[surah_num]
+            
+            if not rasm_letters:
+                continue
+            
+            # Deep analysis: multi-dimensional pattern detection
+            # This is a placeholder for more sophisticated analysis
+            
+            # Calculate complexity metrics
+            unique_letters = len(set(rasm_letters))
+            total_letters = len(rasm_letters)
+            complexity_ratio = unique_letters / total_letters if total_letters > 0 else 0
+            
+            muqattaat_complexity = len(set(muqattaat)) / len(muqattaat) if muqattaat else 0
+            
+            if abs(complexity_ratio - muqattaat_complexity) < 0.1:  # Similar complexity
+                hypothesis = Hypothesis(
+                    source_scout=self.name,
+                    goal_link=f"Muqattaat sequence {muqattaat} exhibits complexity ratio {muqattaat_complexity:.3f} that closely matches the overall letter complexity {complexity_ratio:.3f} of Surah {surah_num}, indicating these isolated letters encode a compressed representation of the chapter's linguistic complexity signature.",
+                    description=f"Complexity correlation: Muqattaat {muqattaat_complexity:.3f} vs Chapter {complexity_ratio:.3f}",
+                    transformation_steps=3,
+                    evidence_snippets=[f"Muqattaat complexity: {muqattaat_complexity:.3f}", f"Chapter complexity: {complexity_ratio:.3f}"],
+                    surah_refs=[surah_num],
+                    layer="rasm"
+                )
+                hypotheses.append(hypothesis)
+        
+        return hypotheses

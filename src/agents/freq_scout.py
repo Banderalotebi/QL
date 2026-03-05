@@ -72,3 +72,62 @@ class FreqScout(BaseScout):
                 hypotheses.append(hypothesis)
         
         return hypotheses
+from src.agents.base_scout import BaseScout
+from src.core.state import ResearchState, Hypothesis
+from collections import Counter
+
+class FreqScout(BaseScout):
+    """
+    Frequency analysis scout.
+    Analyzes letter frequency patterns and distributions.
+    """
+    
+    name = "FreqScout"
+    consumes_rasm = True
+    consumes_tashkeel = False
+    
+    def analyze(self, state: ResearchState) -> list[Hypothesis]:
+        """
+        Analyze frequency patterns in the text.
+        """
+        hypotheses = []
+        
+        rasm_matrices = state.get("rasm_matrices", {})
+        muqattaat_map = state.get("muqattaat_map", {})
+        
+        for surah_num in rasm_matrices:
+            if surah_num not in muqattaat_map:
+                continue
+                
+            muqattaat = muqattaat_map[surah_num]
+            rasm_letters = rasm_matrices[surah_num]
+            
+            if not rasm_letters:
+                continue
+            
+            # Frequency analysis
+            letter_counts = Counter(rasm_letters)
+            total_letters = len(rasm_letters)
+            
+            # Calculate frequencies for Muqattaat letters
+            muqattaat_freqs = {}
+            for letter in muqattaat:
+                count = letter_counts.get(letter, 0)
+                freq = count / total_letters if total_letters > 0 else 0
+                muqattaat_freqs[letter] = freq
+            
+            avg_freq = sum(muqattaat_freqs.values()) / len(muqattaat_freqs) if muqattaat_freqs else 0
+            
+            if avg_freq > 0.01:  # If average frequency > 1%
+                hypothesis = Hypothesis(
+                    source_scout=self.name,
+                    goal_link=f"Muqattaat letters {muqattaat} appear with average frequency {avg_freq:.1%} throughout Surah {surah_num}, suggesting these isolated letters represent the most statistically significant phonetic elements that define the chapter's linguistic character.",
+                    description=f"Average Muqattaat letter frequency: {avg_freq:.3f}",
+                    transformation_steps=2,
+                    evidence_snippets=[f"Letter frequencies: {muqattaat_freqs}", f"Average frequency: {avg_freq:.3f}"],
+                    surah_refs=[surah_num],
+                    layer="rasm"
+                )
+                hypotheses.append(hypothesis)
+        
+        return hypotheses

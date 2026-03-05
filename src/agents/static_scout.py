@@ -62,3 +62,52 @@ class StaticScout(BaseScout):
                 hypotheses.append(hypothesis)
         
         return hypotheses
+from src.agents.base_scout import BaseScout
+from src.core.state import ResearchState, Hypothesis
+
+class StaticScout(BaseScout):
+    """
+    Static pattern analysis scout.
+    Analyzes fixed patterns and structures in the text.
+    """
+    
+    name = "StaticScout"
+    consumes_rasm = True
+    consumes_tashkeel = False
+    
+    def analyze(self, state: ResearchState) -> list[Hypothesis]:
+        """
+        Analyze static patterns in the text.
+        """
+        hypotheses = []
+        
+        rasm_matrices = state.get("rasm_matrices", {})
+        muqattaat_map = state.get("muqattaat_map", {})
+        
+        for surah_num in rasm_matrices:
+            if surah_num not in muqattaat_map:
+                continue
+                
+            muqattaat = muqattaat_map[surah_num]
+            rasm_letters = rasm_matrices[surah_num]
+            
+            if not rasm_letters:
+                continue
+            
+            # Simple static analysis: count total letters
+            total_letters = len(rasm_letters)
+            muqattaat_length = len(muqattaat)
+            
+            if total_letters > 0:
+                hypothesis = Hypothesis(
+                    source_scout=self.name,
+                    goal_link=f"Muqattaat sequence {muqattaat} with {muqattaat_length} letters prefixes Surah {surah_num} containing {total_letters} total letters, suggesting a structural relationship between the opening sequence length and chapter content volume.",
+                    description=f"Surah {surah_num}: {muqattaat_length} Muqattaat letters, {total_letters} total letters",
+                    transformation_steps=1,
+                    evidence_snippets=[f"Muqattaat: {muqattaat}", f"Total letters: {total_letters}"],
+                    surah_refs=[surah_num],
+                    layer="rasm"
+                )
+                hypotheses.append(hypothesis)
+        
+        return hypotheses
