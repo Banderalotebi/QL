@@ -1,32 +1,17 @@
-import sqlite3
-from src.utils.abjad import ABJAD
+import tkinter as tk
+from tkinter import ttk
 
 def create_header_panel():
     """Creates a header panel for the application."""
-    # implementation of create_header_panel function
-    pass
+    root = tk.Tk()
+    root.title("Muqattaat Cryptanalytic Lab")
+    header_label = ttk.Label(root, text="Muqattaat Cryptanalytic Lab", font=("Arial", 24))
+    header_label.pack(pady=20)
+    return root
 
-def abjad_calculator(arabic_string: str) -> int:
-    """Calculates the exact Gematria value of a word/verse without 'guessing'."""
-    abjad_value = 0
-    for char in arabic_string:
-        if char in ABJAD:
-            abjad_value += ABJAD[char]
-    return abjad_value
-
-def librarian_get_knowledge(surah_id: int, scout_type: str) -> dict:
-    """Searches the Neon `hypotheses` and `rejected_hypotheses` tables for a 'Briefing'."""
-    conn = sqlite3.connect("neon.db")
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT * FROM hypotheses
-        WHERE surah_id = ? AND scout_type = ?
-    """, (surah_id, scout_type))
-    hypotheses = cursor.fetchall()
-    cursor.execute("""
-        SELECT * FROM rejected_hypotheses
-        WHERE surah_id = ? AND scout_type = ?
-    """, (surah_id, scout_type))
-    rejected_hypotheses = cursor.fetchall()
-    conn.close()
-    return {"hypotheses": hypotheses, "rejected_hypotheses": rejected_hypotheses}
+def display_dataset_overview():
+    """Displays a dataset overview."""
+    root = create_header_panel()
+    dataset_label = ttk.Label(root, text="Dataset Overview", font=("Arial", 18))
+    dataset_label.pack(pady=20)
+    return root
