@@ -2,6 +2,7 @@
 import os
 from src.data.db_neon import NeonLabAPI
 from src.core.state import ResearchState, Hypothesis
+from src.core.scout import BaseScout  # Import the missing class
 
 class MathScout(BaseScout):
     """
