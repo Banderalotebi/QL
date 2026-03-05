@@ -136,4 +136,3 @@ def rank_theories(hypotheses, goals=None) -> list:
     
     # Return just the hypotheses in ranked order
     return [h for h, s in scored]
-
