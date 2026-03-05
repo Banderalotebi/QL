@@ -1,15 +1,16 @@
 # src/core/scorer.py
 # Occam Razor scoring for the Muqattaat Cryptanalytic Lab
 
-from __future__ import annotations
-
 import math
+import requests
 from typing import Sequence
-
-from src.core.state import Hypothesis
+from src.core.state import ResearchState
 
 # ── Constants ────────────────────────────────────────────────────────────────
 
+CHAT_OLLAMA_API_URL = "https://api.chatollama.com/v1"
+
+# Restoring required constants for the scoring formula
 LAMBDA: float = 0.15
 """
 Occam complexity penalty rate. Non-negotiable per CONVENTIONS.md.
@@ -19,23 +20,13 @@ A theory needing >5 transformations starts below 0.47 regardless of evidence.
 GOAL_ALIGNMENT_BONUS: float = 0.10
 """
 Bonus added when a hypothesis explicitly targets the Muqattaat sequences
-(i.e. surah_refs overlap with known Muqattaat Surahs and goal_link mentions
-specific letter sequences).
+(i.e. surah_refs overlap with known Muqattaat Surahs).
 """
 
-# The 29 Surahs that open with Muqattaat sequences.
 MUQATTAAT_SURAH_NUMBERS: frozenset[int] = frozenset(
     [2, 3, 7, 10, 11, 12, 13, 14, 15, 19, 20, 26, 27, 28, 29, 30, 31, 32,
      36, 38, 40, 41, 42, 43, 44, 45, 46, 50, 68]
 )
-
-# Keywords that indicate a goal_link is specifically about the Muqattaat.
-_MUQATTAAT_KEYWORDS: tuple[str, ...] = (
-    "muqattaat", "isolated letter", "disjointed letter", "الحروف المقطعة",
-    "alif lam mim", "alm", "alr", "alms", "ha mim", "ya sin", "ta ha",
-    "phonetic key", "consonantal", "letter sequence", "opening letter",
-)
-
 
 # ── Core formula ─────────────────────────────────────────────────────────────
 
