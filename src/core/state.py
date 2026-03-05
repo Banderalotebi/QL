@@ -1,5 +1,6 @@
 # src/core/state.py
-from typing import TypedDict, List, Dict, Any
+import operator
+from typing import TypedDict, List, Dict, Any, Annotated
 from dataclasses import dataclass, field
 
 @dataclass
@@ -20,17 +21,19 @@ class RejectedHypothesis:
 class ResearchState(TypedDict, total=False):
     surah_numbers: List[int]
     focus: str
-    raw_hypotheses: List[Hypothesis]
-    survivor_hypotheses: List[Hypothesis]
-    synthesized_theories: List[Hypothesis]
-    scored_theories: List[Hypothesis]
-    errors: List[str]
     
-    # Required by main.py
+    # LangGraph Reducers: operator.add ensures lists append instead of overwrite
+    raw_hypotheses: Annotated[List[Hypothesis], operator.add]
+    survivor_hypotheses: Annotated[List[Hypothesis], operator.add]
+    synthesized_theories: Annotated[List[Hypothesis], operator.add]
+    scored_theories: Annotated[List[Hypothesis], operator.add]
+    errors: Annotated[List[str], operator.add]
+    known_dead_ends: Annotated[List[Any], operator.add]
+    rejected_hypotheses: Annotated[List[RejectedHypothesis], operator.add]
+    
+    # Static info
     input_surah_numbers: List[int]
     input_focus: str
     data_dir: str
     run_id: str
-    known_dead_ends: List[Any]
-    rejected_hypotheses: List[RejectedHypothesis]
     lab_report: Dict[str, Any]
