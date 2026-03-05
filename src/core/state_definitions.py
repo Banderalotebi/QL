@@ -2,6 +2,7 @@
 from __future__ import annotations
 from src.core.state import ResearchState
 from src.data.neon_db import NeonDB
+from src.agents.micro_scout import MicroScout
 
 _neon_db = NeonDB()
 
