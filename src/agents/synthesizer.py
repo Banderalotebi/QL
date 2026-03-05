@@ -1,11 +1,19 @@
 # src/agents/synthesizer.py
-from src.data.db import get_db_connection
+from src.data.neon_db import NeonDB
 from src.core.state import ResearchState
+
+_neon_db = NeonDB()
 
 class Synthesizer:
     """
     Synthesizer agent that combines related hypotheses into unified theories.
     """
+    
+    def __init__(self):
+        """
+        Initialize the synthesizer with a database connection.
+        """
+        self.conn = _neon_db.conn
     
     def run(self, state: ResearchState) -> ResearchState:
         """
@@ -23,21 +31,14 @@ class Synthesizer:
         state["synthesized_theories"] = survivors.copy()
         print(f"Hey, I've combined the hypotheses into a unified theory!")
         
-        # Save the final theories into the database
-        conn = get_db_connection()
-        cur = conn.cursor()
-        try:
-            for theory in state["synthesized_theories"]:
-                cur.execute(
-                    "INSERT INTO hypotheses (run_id, source_scout, surah_id, description, score, alchemist_reward) VALUES (%s, %s, %s, %s, %s, %s)",
-                    (state["run_id"], theory["source_scout"], theory["surah_id"], theory["description"], theory["score"], theory["alchemist_reward"])
-                )
-            conn.commit()
-        except Exception as e:
-            print(f"[Synthesizer DB Error]: {e}")
-        finally:
-            cur.close()
-            conn.close()
+        # Save the final theories into the `hypotheses` table in Neon
+        cur = self.conn.cursor()
+        for theory in state["synthesized_theories"]:
+            cur.execute(
+                "INSERT INTO hypotheses (run_id, source_scout, surah_id, description, score, alchemist_reward) VALUES (%s, %s, %s, %s, %s, %s)",
+                (state["run_id"], theory["source_scout"], theory["surah_id"], theory["description"], theory["score"], theory["alchemist_reward"])
+            )
+        self.conn.commit()
+        self.conn.close()
         
         return state
-
