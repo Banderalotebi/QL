@@ -1,6 +1,8 @@
 import os
 from src.data.db import record_hypothesis
 from src.utils.tools import Librarian
+from src.core.state import ResearchState
+from langchain.chat_models import ChatOllama
 
 class MicroScout:
     def __init__(self):
