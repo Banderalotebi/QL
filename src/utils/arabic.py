@@ -75,23 +75,9 @@ def arabic_letters_only(text: str) -> list[str]:
     Returns:
         List of individual Arabic letter characters (rasm layer)
     """
-    # Find all Arabic letters using regex
+    # Use the regex pattern to find all Arabic letters
     letters = ARABIC_LETTER_PATTERN.findall(text)
-    
-    # Additional filtering to remove any remaining non-letter characters
-    filtered_letters = []
-    for letter in letters:
-        # Skip if it's a diacritic mark (tashkeel)
-        if '\u064B' <= letter <= '\u065F':  # Diacritic range
-            continue
-        if '\u0670' <= letter <= '\u0671':  # Additional diacritic range
-            continue
-        if letter in '\u06D6\u06D7\u06D8\u06D9\u06DA\u06DB\u06DC\u06DD\u06DE\u06DF\u06E0\u06E1\u06E2\u06E3\u06E4\u06E5\u06E6\u06E7\u06E8\u06E9\u06EA\u06EB\u06EC\u06ED':
-            continue
-        
-        filtered_letters.append(letter)
-    
-    return filtered_letters
+    return letters
 
 
 def detect_muqattaat_in_text(text: str, surah_number: int) -> Optional[str]:

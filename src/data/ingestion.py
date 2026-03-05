@@ -20,7 +20,7 @@ import unicodedata
 from pathlib import Path
 
 from src.core.state import ResearchState
-from src.utils.arabic import strip_basmalah, arabic_letters_only, detect_muqattaat_in_text
+from src.utils.arabic import strip_basmalah, arabic_letters_only, detect_muqattaat_in_text, KNOWN_MUQATTAAT
 
 # ── Arabic Unicode ranges ─────────────────────────────────────────────────────
 
@@ -152,10 +152,10 @@ def ingest_surah(surah_number: int, raw_text: str | None = None) -> tuple[list[s
     # For rasm layer: extract only Arabic letters (no diacritics)
     rasm_letters = arabic_letters_only(clean_text)
     
-    # For tashkeel layer: preserve the original text structure
-    # This is a simplified approach - in a full implementation,
-    # we'd extract diacritic overlays more precisely
-    tashkeel_matrix = [clean_text]  # Keep as single string for now
+    # For tashkeel layer: extract diacritic map and convert to list format
+    tashkeel_map = extract_tashkeel_map(clean_text)
+    # Convert tashkeel map to a format that preserves positional diacritic info
+    tashkeel_matrix = [derive_phonetic_rhythm(clean_text)]  # Use phonetic rhythm for tashkeel layer
     
     # Detect Muqattaat
     muqattaat = detect_muqattaat_in_text(raw_text, surah_number)
@@ -183,7 +183,13 @@ def run_ingestion(state: ResearchState) -> ResearchState:
     state["tashkeel_matrices"] = {}
     state["muqattaat_map"] = {}
     state["raw_text"] = {}
-    state["known_dead_ends"] = []  # TODO: Load from Knowledge Graph
+    # Load known dead ends from Knowledge Graph
+    try:
+        from src.data.knowledge_graph import KnowledgeGraphLinker
+        kg_linker = KnowledgeGraphLinker()
+        state["known_dead_ends"] = kg_linker.get_dead_end_fingerprints()
+    except Exception:
+        state["known_dead_ends"] = []  # Fallback to empty list
     
     errors = state.get("errors", [])
     
