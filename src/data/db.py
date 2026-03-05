@@ -19,4 +19,6 @@ class NeonLabAPI:
         self.keys = jwks['keys']
 
     def sign_payload(self, payload, public_key):
-        # ... rest of the code ...
+        # Corrected indentation
+        if public_key:
+            # ... rest of the code ...
