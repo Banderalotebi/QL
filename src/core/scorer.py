@@ -5,6 +5,7 @@ import math
 import requests
 from typing import Sequence
 from src.core.state import ResearchState
+from src.core.hypothesis import Hypothesis  # Import the Hypothesis class
 
 # ── Constants ────────────────────────────────────────────────────────────────
 
@@ -27,6 +28,9 @@ MUQATTAAT_SURAH_NUMBERS: frozenset[int] = frozenset(
     [2, 3, 7, 10, 11, 12, 13, 14, 15, 19, 20, 26, 27, 28, 29, 30, 31, 32,
      36, 38, 40, 41, 42, 43, 44, 45, 46, 50, 68]
 )
+
+# Define the _MUQATTAAT_KEYWORDS constant
+_MUQATTAAT_KEYWORDS = ["muqattaat", "muqattaat letters", "muqattaat sequences"]
 
 # ── Core formula ─────────────────────────────────────────────────────────────
 
