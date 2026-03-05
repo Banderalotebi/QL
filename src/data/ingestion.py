@@ -93,12 +93,11 @@ def isolate_muqattaat(raw_text: str, surah_number: int) -> list[str]:
     (after Basmalah). We extract the first 1–5 letter tokens and check
     against the canonical registry.
     """
-    if surah_number not in MUQATTAAT_SURAHS:
-        return []
-
-    entry = BY_SURAH[surah_number]
-    # Return the canonical Arabic sequence as the isolated sequence
-    return [entry.arabic_sequence]
+    # Use the detect_muqattaat_in_text function from arabic utils
+    muqattaat = detect_muqattaat_in_text(raw_text, surah_number)
+    if muqattaat:
+        return [muqattaat]
+    return []
 
 
 # ── Surah file loader ─────────────────────────────────────────────────────────
