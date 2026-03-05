@@ -1,4 +1,4 @@
-from src.core.state import ResearchState, Hypothesis
+from src.data.db import get_db_connection
 
 class Synthesizer:
     """
