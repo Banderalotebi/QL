@@ -3,6 +3,9 @@ import operator
 from typing import TypedDict, List, Dict, Any, Annotated, Optional
 from dataclasses import dataclass, field
 
+# Import the necessary modules to avoid Name Shadowing
+from operator import add
+
 @dataclass
 class Hypothesis:
     source_scout: str
@@ -23,13 +26,13 @@ class ResearchState(TypedDict, total=False):
     focus: str
     
     # LangGraph Reducers: ensures parallel agent results are merged
-    raw_hypotheses: Annotated[List[Hypothesis], operator.add]
-    survivor_hypotheses: Annotated[List[Hypothesis], operator.add]
-    synthesized_theories: Annotated[List[Hypothesis], operator.add]
-    scored_theories: Annotated[List[Hypothesis], operator.add]
-    errors: Annotated[List[str], operator.add]
-    known_dead_ends: Annotated[List[Any], operator.add]
-    rejected_hypotheses: Annotated[List[RejectedHypothesis], operator.add]
+    raw_hypotheses: Annotated[List[Hypothesis], add]
+    survivor_hypotheses: Annotated[List[Hypothesis], add]
+    synthesized_theories: Annotated[List[Hypothesis], add]
+    scored_theories: Annotated[List[Hypothesis], add]
+    errors: Annotated[List[str], add]
+    known_dead_ends: Annotated[List[Any], add]
+    rejected_hypotheses: Annotated[List[RejectedHypothesis], add]
     
     # Run Metadata
     input_surah_numbers: List[int]
@@ -37,4 +40,3 @@ class ResearchState(TypedDict, total=False):
     data_dir: str
     run_id: str
     lab_report: Dict[str, Any]
-
