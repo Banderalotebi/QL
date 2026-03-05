@@ -131,4 +131,3 @@ def detect_muqattaat_in_text(text: str, surah_number: int) -> Optional[str]:
         return expected_muqattaat
     
     return None
-
