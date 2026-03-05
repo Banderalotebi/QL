@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from src.core.state_utils import build_graph
+from src.core.graph_utils import build_graph
 
 # ── Agent singletons ──────────────────────────────────────────────────────────
 from src.agents.micro_scout import MicroScout
@@ -64,4 +64,4 @@ def _run_synthesizer(state: ResearchState) -> ResearchState:
 # ── Graph builder ─────────────────────────────────────────────────────────────
 
 def build_graph() -> StateGraph:
-    return src.core.state_utils.build_graph()
+    return src.core.graph_utils.build_graph()

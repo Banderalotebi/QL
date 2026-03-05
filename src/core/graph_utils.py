@@ -1,4 +1,4 @@
-# src/core/state_utils.py
+# src/core/graph_utils.py
 from langgraph.graph import END, StateGraph
 from src.core.state_definitions import ResearchState
 
