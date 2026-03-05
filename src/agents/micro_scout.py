@@ -6,7 +6,7 @@ from src.data.db import record_hypothesis, NeonLabAPI
 class MicroScout:
     def __init__(self):
         self.llm = ChatOllama(
-            model="llama3.1:8b", # Upgraded for 128k context & tool calling
+            model="ollama/llama3.1", # Changed from "llama3.1:8b" to "ollama/llama3.1"
             temperature=0.1,
             num_ctx=131072
         )
