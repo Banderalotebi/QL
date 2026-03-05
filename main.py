@@ -11,8 +11,8 @@ from rich.table import Table
 from src.core.graph_utils import compile_graph
 from src.core.state import ResearchState
 from src.utils.arabic import MUQATTAAT_SURAH_NUMBERS
-# Note: create_header_panel and display_dataset_overview must be in tools.py or elsewhere
-from src.utils.tools import abjad_calculator, librarian_get_knowledge 
+from src.utils.tools import abjad_calculator, librarian_get_knowledge, create_header_panel, display_dataset_overview
+from src.data.db import init_db_schema
 
 console = Console()
 
@@ -66,6 +66,11 @@ def display_results(state: ResearchState):
 def main():
     parser = argparse.ArgumentParser(description="Muqattaat Cryptanalytic Lab")
     parser.add_argument(
+        "--all-muqattaat",
+        action="store_true",
+        help="Analyze all 29 Muqattaat Surahs"
+    )
+    parser.add_argument(
         "--surahs", 
         nargs="+", 
         type=int, 
@@ -85,6 +90,11 @@ def main():
     
     args = parser.parse_args()
     
+    # Handle --all-muqattaat flag
+    if args.all_muqattaat:
+        args.surahs = list(MUQATTAAT_SURAH_NUMBERS)
+        console.print(f"\n✨ Running analysis on all 29 Muqattaat Surahs!")
+    
     # Display header
     console.print(create_header_panel())
     display_dataset_overview()
@@ -101,6 +111,10 @@ def main():
     
     console.print(f"\n🔍 Analyzing Surahs: {args.surahs}")
     console.print("🚀 Starting research pipeline...\n")
+    
+    # Initialize database schema
+    console.print("📦 Initializing database schema...")
+    init_db_schema()
     
     # Initialize state
     initial_state: ResearchState = {
@@ -124,3 +138,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
