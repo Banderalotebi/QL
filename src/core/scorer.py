@@ -5,7 +5,9 @@ import math
 import requests
 from typing import Sequence
 from src.core.state import ResearchState
-from src.core.hypothesis import Hypothesis  # Import the Hypothesis class
+from src.data.neon_db import NeonDB
+
+_neon_db = NeonDB()
 
 # ...
 
@@ -27,5 +29,9 @@ def compute_evidence_weight(hypothesis: Hypothesis) -> float:
     if any(keyword in hypothesis.goal_link.lower() for keyword in ["muqattaat dna", "jeddah coordinates", "dna base pairs"]):
         # Reward the hypothesis with a bonus score
         base += 0.1
+
+    # Check if the hypothesis is a rejected hypothesis
+    if hypothesis in _neon_db.get_rejected_hypotheses():
+        return 0.0
 
     return base

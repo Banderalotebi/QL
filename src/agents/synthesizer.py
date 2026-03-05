@@ -1,4 +1,7 @@
-from src.data.db import get_db_connection
+# src/agents/synthesizer.py
+from src.data.neon_db import NeonDB
+
+_neon_db = NeonDB()
 
 class Synthesizer:
     """
@@ -22,7 +25,7 @@ class Synthesizer:
         print(f"Hey, I've combined the hypotheses into a unified theory!")
         
         # Save the final theories into the `hypotheses` table in Neon
-        conn = get_db_connection()
+        conn = _neon_db.conn
         cur = conn.cursor()
         for theory in state["synthesized_theories"]:
             cur.execute(
