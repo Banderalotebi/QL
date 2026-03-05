@@ -1,11 +1,9 @@
-# src/core/state.py
-# Research state machine definition for the Muqattaat Cryptanalytic Lab
+# src/core/state_definitions.py
+# Research state definitions for the Muqattaat Cryptanalytic Lab
 
 from __future__ import annotations
 
-from langgraph.graph import END, StateGraph
-
-from src.core.state_definitions import build_graph
+from src.core.state import ResearchState
 
 # ── Agent singletons ──────────────────────────────────────────────────────────
 _micro_scout = MicroScout()
