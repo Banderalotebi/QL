@@ -1,4 +1,5 @@
-from src.utils.arabic import strip_basmalah, arabic_letters_only, detect_muqattaat_in_text
+# src/data/ingestion.py
+from src.data.db import get_db_connection
 
 def load_surah_text(surah_number: int, script_type: str = "quran-simple-clean") -> str:
     """Load text from Neon DB (Primary) or Local File (Fallback)."""
@@ -17,3 +18,4 @@ def load_surah_text(surah_number: int, script_type: str = "quran-simple-clean") 
         print(f"[DB Warning]: {e}. Falling back to local files.")
     
     # ... existing local file loading logic here ...
+

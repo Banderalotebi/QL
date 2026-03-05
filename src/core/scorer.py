@@ -1,4 +1,14 @@
-from src.core.state import Hypothesis
+# src/core/scorer.py
+# Occam Razor scoring for the Muqattaat Cryptanalytic Lab
+
+import math
+import requests
+from typing import Sequence
+from src.core.state import ResearchState, Hypothesis
+from src.data.neon_db import NeonDB
+
+# Initialize the global DB instance for the scorer
+_neon_db = NeonDB()
 
 def compute_evidence_weight(hypothesis: Hypothesis) -> float:
     """
@@ -12,8 +22,6 @@ def compute_evidence_weight(hypothesis: Hypothesis) -> float:
     """
     base = min(len(hypothesis.evidence_snippets) / 5.0, 1.0)
 
-    # ...
-
     # Check if the hypothesis goal_link contains any "Meaning Anchors"
     if any(keyword in hypothesis.goal_link.lower() for keyword in ["muqattaat dna", "jeddah coordinates", "dna base pairs"]):
         # Reward the hypothesis with a bonus score
@@ -24,3 +32,4 @@ def compute_evidence_weight(hypothesis: Hypothesis) -> float:
         return 0.0
 
     return base
+

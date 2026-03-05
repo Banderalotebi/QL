@@ -1,5 +1,7 @@
-from dataclasses import dataclass, field
+# src/core/state.py
+import operator
 from typing import TypedDict, List, Dict, Any, Annotated, Optional
+from dataclasses import dataclass, field
 
 @dataclass
 class Hypothesis:
@@ -35,3 +37,4 @@ class ResearchState(TypedDict, total=False):
     data_dir: str
     run_id: str
     lab_report: Dict[str, Any]
+
