@@ -11,7 +11,7 @@ from src.agents.freq_scout import FreqScout
 from src.agents.deep_scout import DeepScout
 from src.agents.the_fool import TheFool
 from src.agents.synthesizer import Synthesizer
-from src.agents.alchemist_leader import AlchemistLeader
+from src.core.leaders import AlchemistLeader
 
 _neon_db = NeonDB()
 
