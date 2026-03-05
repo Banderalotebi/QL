@@ -9,6 +9,12 @@ class Synthesizer:
     Synthesizer agent that combines related hypotheses into unified theories.
     """
     
+    def __init__(self):
+        """
+        Initialize the synthesizer with a database connection.
+        """
+        self.conn = _neon_db.conn
+    
     def run(self, state: ResearchState) -> ResearchState:
         """
         Synthesize survivor hypotheses into theories.
@@ -26,14 +32,13 @@ class Synthesizer:
         print(f"Hey, I've combined the hypotheses into a unified theory!")
         
         # Save the final theories into the `hypotheses` table in Neon
-        conn = _neon_db.conn
-        cur = conn.cursor()
+        cur = self.conn.cursor()
         for theory in state["synthesized_theories"]:
             cur.execute(
                 "INSERT INTO hypotheses (run_id, source_scout, surah_id, description, score, alchemist_reward) VALUES (%s, %s, %s, %s, %s, %s)",
                 (state["run_id"], theory["source_scout"], theory["surah_id"], theory["description"], theory["score"], theory["alchemist_reward"])
             )
-        conn.commit()
-        conn.close()
+        self.conn.commit()
+        self.conn.close()
         
         return state
