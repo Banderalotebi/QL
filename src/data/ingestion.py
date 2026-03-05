@@ -201,3 +201,144 @@ def run_ingestion(state: ResearchState) -> ResearchState:
     state.setdefault("known_dead_ends", [])
 
     return state
+# Data ingestion pipeline for the Muqattaat Cryptanalytic Lab
+
+from __future__ import annotations
+
+import os
+from pathlib import Path
+from typing import Optional
+
+from src.core.state import ResearchState
+from src.utils.arabic import strip_basmalah, arabic_letters_only, detect_muqattaat_in_text
+
+
+def load_surah_text(surah_number: int) -> Optional[str]:
+    """
+    Load raw Uthmani text for a specific Surah.
+    
+    Args:
+        surah_number: Surah number (1-indexed)
+        
+    Returns:
+        Raw Uthmani text content, or None if file not found
+    """
+    # Construct path to the Surah file
+    data_dir = Path("data/raw/quran-uthmani-min")
+    surah_file = data_dir / f"Surah_{surah_number}.txt"
+    
+    try:
+        if not surah_file.exists():
+            print(f"Warning: Surah file not found: {surah_file}")
+            return None
+            
+        with open(surah_file, 'r', encoding='utf-8') as f:
+            content = f.read().strip()
+            
+        if not content:
+            print(f"Warning: Empty Surah file: {surah_file}")
+            return None
+            
+        return content
+        
+    except Exception as e:
+        print(f"Error loading Surah {surah_number}: {e}")
+        return None
+
+
+def process_surah_to_matrices(text: str, surah_number: int) -> tuple[list[str], list[str]]:
+    """
+    Process raw Surah text into rasm and tashkeel matrices.
+    
+    Args:
+        text: Raw Uthmani text
+        surah_number: Surah number for context
+        
+    Returns:
+        Tuple of (rasm_matrix, tashkeel_matrix)
+    """
+    # Strip Basmalah first
+    clean_text = strip_basmalah(text)
+    
+    # For rasm layer: extract only Arabic letters (no diacritics)
+    rasm_letters = arabic_letters_only(clean_text)
+    
+    # For tashkeel layer: preserve the original text structure
+    # This is a simplified approach - in a full implementation,
+    # we'd extract diacritic overlays more precisely
+    tashkeel_matrix = [clean_text]  # Keep as single string for now
+    
+    return rasm_letters, tashkeel_matrix
+
+
+def ingest_surah(surah_number: int) -> tuple[Optional[list[str]], Optional[list[str]], Optional[str], Optional[str]]:
+    """
+    Ingest a single Surah and return processed matrices.
+    
+    Args:
+        surah_number: Surah number (1-indexed)
+        
+    Returns:
+        Tuple of (rasm_matrix, tashkeel_matrix, muqattaat, raw_text)
+    """
+    # Load raw text
+    raw_text = load_surah_text(surah_number)
+    if not raw_text:
+        return None, None, None, None
+    
+    # Process into matrices
+    rasm_matrix, tashkeel_matrix = process_surah_to_matrices(raw_text, surah_number)
+    
+    # Detect Muqattaat
+    muqattaat = detect_muqattaat_in_text(raw_text, surah_number)
+    
+    return rasm_matrix, tashkeel_matrix, muqattaat, raw_text
+
+
+def run_ingestion(state: ResearchState) -> ResearchState:
+    """
+    Main ingestion pipeline that populates the ResearchState.
+    
+    Args:
+        state: Current research state
+        
+    Returns:
+        Updated state with ingested data
+    """
+    surah_numbers = state.get("surah_numbers", [])
+    if not surah_numbers:
+        state["errors"] = state.get("errors", []) + ["No Surah numbers specified for ingestion"]
+        return state
+    
+    # Initialize state dictionaries
+    state["rasm_matrices"] = {}
+    state["tashkeel_matrices"] = {}
+    state["muqattaat_map"] = {}
+    state["raw_text"] = {}
+    state["known_dead_ends"] = []  # TODO: Load from Knowledge Graph
+    
+    errors = state.get("errors", [])
+    
+    # Process each Surah
+    for surah_num in surah_numbers:
+        try:
+            rasm, tashkeel, muqattaat, raw = ingest_surah(surah_num)
+            
+            if rasm is None:
+                errors.append(f"Failed to ingest Surah {surah_num}")
+                continue
+            
+            # Store in state
+            state["rasm_matrices"][surah_num] = rasm
+            state["tashkeel_matrices"][surah_num] = tashkeel
+            state["raw_text"][surah_num] = raw
+            
+            # Store Muqattaat if found
+            if muqattaat:
+                state["muqattaat_map"][surah_num] = muqattaat
+                
+        except Exception as e:
+            errors.append(f"Error processing Surah {surah_num}: {str(e)}")
+    
+    state["errors"] = errors
+    return state
