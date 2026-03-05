@@ -1,6 +1,15 @@
 from __future__ import annotations
 
 from src.core.state_definitions import build_graph
+from src.agents.micro_scout import MicroScout
+from src.agents.static_scout import StaticScout
+from src.agents.linguistic_scout import LinguisticScout
+from src.agents.symbolic_scout import SymbolicScout
+from src.agents.math_scout import MathScout
+from src.agents.freq_scout import FreqScout
+from src.agents.deep_scout import DeepScout
+from src.agents.the_fool import TheFool
+from src.agents.synthesizer import Synthesizer
 
 # ── Agent singletons ──────────────────────────────────────────────────────────
 _micro_scout = MicroScout()

@@ -1,4 +1,5 @@
 from langgraph.graph import END, StateGraph
+from src.core.state import ResearchState
 
 def build_graph() -> StateGraph:
     graph = StateGraph(ResearchState)
