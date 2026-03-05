@@ -15,8 +15,6 @@ from src.agents.freq_scout import FreqScout
 from src.agents.deep_scout import DeepScout
 from src.agents.the_fool import TheFool
 from src.agents.synthesizer import Synthesizer
-from src.core.scorer import rank_theories
-from src.data.knowledge_graph import KnowledgeGraphLinker
 
 # ── Agent singletons ──────────────────────────────────────────────────────────
 _micro_scout = MicroScout()
@@ -28,7 +26,6 @@ _freq_scout = FreqScout()
 _deep_scout = DeepScout()
 _the_fool = TheFool()
 _synthesizer = Synthesizer()
-_kg_linker = KnowledgeGraphLinker()
 
 
 # ── Node wrappers ─────────────────────────────────────────────────────────────
@@ -64,14 +61,6 @@ def _run_the_fool(state: ResearchState) -> ResearchState:
 def _run_synthesizer(state: ResearchState) -> ResearchState:
     return _synthesizer.run(state)
 
-def _run_scorer(state: ResearchState) -> ResearchState:
-    theories = state.get("synthesized_theories", [])
-    state["scored_theories"] = rank_theories(theories)
-    return state
-
-def _run_kg_linker(state: ResearchState) -> ResearchState:
-    return _kg_linker.run(state)
-
 
 # ── Graph builder ─────────────────────────────────────────────────────────────
 
@@ -88,8 +77,6 @@ def build_graph() -> StateGraph:
     graph.add_node("deep_scout", _run_deep_scout)
     graph.add_node("the_fool", _run_the_fool)
     graph.add_node("synthesizer", _run_synthesizer)
-    graph.add_node("scorer", _run_scorer)
-    graph.add_node("kg_linker", _run_kg_linker)
 
     graph.set_entry_point("ingestion")
     graph.add_edge("ingestion", "micro_scout")
@@ -101,9 +88,7 @@ def build_graph() -> StateGraph:
     graph.add_edge("freq_scout", "deep_scout")
     graph.add_edge("deep_scout", "the_fool")
     graph.add_edge("the_fool", "synthesizer")
-    graph.add_edge("synthesizer", "scorer")
-    graph.add_edge("scorer", "kg_linker")
-    graph.add_edge("kg_linker", END)
+    graph.add_edge("synthesizer", END)
 
     return graph
 
