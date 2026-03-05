@@ -1,10 +1,20 @@
-import sqlite3
+# main.py
+import sys
+from src.core.graph import compile_graph
 
-class NeonLabAPI:
-    def __init__(self):
-        self.conn = sqlite3.connect("neon.db")
-        self.cursor = self.conn.cursor()
+def main():
+    # ... rest of the code ...
 
-    def record_hypothesis(self, hypothesis):
-        # implementation of record_hypothesis function
-        pass
+if __name__ == '__main__':
+    # ... rest of the code ...
+
+    # Add the following line to import the record_hypothesis function
+    from src.data.db import NeonLabAPI
+
+    # ... rest of the code ...
+
+    # Add the following line to call the record_hypothesis function
+    NeonLabAPI().record_hypothesis(hypothesis)
+
+    # ... rest of the code ...
+
