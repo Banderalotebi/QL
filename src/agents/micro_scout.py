@@ -16,13 +16,24 @@ class MicroScout:
         self.librarian = Librarian()
 
     def run(self, state: ResearchState) -> dict:
-        # Get previous research context for the current Surah
+        # 1. Get previous research context for the current Surah
         context = self.librarian.get_context_for_surah(state.surah_id)
         
-        # Generate new hypothesis using Ollama
-        hypothesis = self.llm.generate_hypothesis(context)
+        # 2. Construct the prompt (incorporating the state and librarian data)
+        prompt = f"""
+        Research Task: {state.query}
+        Surah Context: {context}
+        Additional Data: {state.current_findings}
         
-        # Record hypothesis in Neon
-        record_hypothesis(state.run_id, hypothesis)
-        
-        return hypothesis
+        Analyze the above and provide a detailed report.
+        """
+
+        # 3. Invoke the LLM
+        # Assuming you're using LangChain's ChatOllama based on the syntax
+        response = self.llm.invoke(prompt)
+
+        # 4. Update and return the state
+        return {
+            "research_notes": response.content,
+            "status": "complete"
+        }
