@@ -10,8 +10,7 @@ from src.core.state import ResearchState
 
 # ── Constants ───────────────────────────────────────────────────────────────
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
-QURAN_DIR = os.path.join(DATA_DIR, "Quran_Extracted_Texts")
+CHAT_OLLAMA_API_URL = "https://api.chatollama.com/v1"
 
 # ── Functions ───────────────────────────────────────────────────────────────
 
@@ -25,8 +24,8 @@ def load_surah_text(surah_number: int) -> str:
     Returns:
         The text of the Surah as a string.
     """
-    surah_dir = os.path.join(QURAN_DIR, f"quran-{surah_number}-min")
-    text_file = os.path.join(surah_dir, f"{surah_number}.txt")
+    surah_dir = os.path.join(os.path.dirname(__file__), "data", "Quran_Extracted_Texts")
+    text_file = os.path.join(surah_dir, f"quran-{surah_number}-min", f"{surah_number}.txt")
     if not os.path.exists(text_file):
         raise FileNotFoundError(f"Text file for Surah {surah_number} not found.")
     with open(text_file, "r") as f:
