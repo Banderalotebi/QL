@@ -4,9 +4,9 @@ from src.utils.tools import Librarian
 
 class MicroScout:
     def __init__(self):
-        # Initializing Ollama 8B (Llama 3) with infinite predict & max context
+        # Initializing Ollama 3.1 with infinite predict & max context
         self.llm = ChatOllama(
-            model="llama3:8b",
+            model="llama3.1:8b",
             temperature=0.1,
             num_predict=-1,
             num_ctx=8192
