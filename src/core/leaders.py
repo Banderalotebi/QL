@@ -24,7 +24,18 @@ class ExecutionerLeader:
         """
         Monitor performance metrics and trigger factory spawn if necessary.
         """
-        # TODO: Implement performance metric monitoring and factory spawn logic
+        # Implement dynamic respawning of Scouts with modified prompts
+        # Get the current scores from the scorer
+        scores = state.get("scores", [])
+        
+        # Check if any scores are below 0.85
+        if any(score < 0.85 for score in scores):
+            # Trigger factory spawn for a new specialist agent
+            # Create a new MicroScout with a modified prompt
+            new_scout = MicroScout(prompt="Modified prompt")
+            # Add the new scout to the state
+            state["scouts"].append(new_scout)
+        
         return state
 
 class AlchemistLeader:
@@ -36,5 +47,15 @@ class AlchemistLeader:
         """
         Audit goal_link fields and update state accordingly.
         """
-        # TODO: Implement goal_link auditing and state updating logic
+        # Implement reward mechanism for hypotheses that map letters to physical, geographical, or biological realities
+        # Get the current hypotheses from the state
+        hypotheses = state.get("hypotheses", [])
+        
+        # Iterate over the hypotheses
+        for hypothesis in hypotheses:
+            # Check if the goal_link field contains any "Meaning Anchors"
+            if any(keyword in hypothesis.goal_link.lower() for keyword in ["muqattaat dna", "jeddah coordinates", "dna base pairs"]):
+                # Reward the hypothesis with a bonus score
+                hypothesis.score += 0.1
+        
         return state
