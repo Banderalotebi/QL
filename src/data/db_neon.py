@@ -25,7 +25,7 @@ class NeonLabAPI:
                 INSERT INTO c2_research_hypothesis (hypothesis)
                 VALUES (%s)
             """, (hypothesis,))
-        print(f"✅ Hypothesis Recorded: {hypothesis}")
+        self.conn.commit()
 
     def get_verse_math(self, surah_id: int):
         """Returns prefix density ratios for all verses in a Surah."""
@@ -57,7 +57,7 @@ class NeonLabAPI:
             cur.execute("""
                 INSERT INTO c2_finding_log (ticket_id, discovery_title, json_payload, score_boost)
                 VALUES (%s, %s, %s, %s)
-            """, (ticket_id, title, Json(payload), score))
+            """, (ticket_id, title, json.dumps(payload), score))
             cur.execute("UPDATE c2_research_ticket SET status = 'Completed' WHERE ticket_id = %s", (ticket_id,))
         print(f"✅ Discovery Logged: {title} (Ticket: {ticket_id})")
 
