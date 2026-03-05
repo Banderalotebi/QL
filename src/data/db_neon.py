@@ -1,50 +1,59 @@
 # src/data/db_neon.py
-import os
 import psycopg2
-from psycopg2.extras import RealDictCursor, Json
-from dotenv import load_dotenv
-
-load_dotenv()
-
-def get_db_connection():
-    """Establishes a secure connection to the Neon PostgreSQL instance."""
-    url = os.getenv("DATABASE_URL")
-    # Neon often requires sslmode=require for remote connections
-    return psycopg2.connect(url, cursor_factory=RealDictCursor)
+import json
+import requests
 
 class NeonLabAPI:
-    """
-    Central API endpoints for all agents. 
-    Allows 24/7 data access and event recording without local file overhead.
-    """
     def __init__(self):
-        self.conn = get_db_connection()
+        self.conn = psycopg2.connect(os.getenv("DATABASE_URL"))
         self.conn.autocommit = True
+        self.api_url = "https://ep-rough-river-aedemse4.apirest.c-2.us-east-2.aws.neon.tech/neondb/"
+        self.auth_url = "https://ep-rough-river-aedemse4.neonauth.c-2.us-east-2.aws.neon.tech/neond"
+        self.jwks_url = "https://ep-rough-river-aedemse4.neonauth.c-2.us-east-2.aws.neon.tech/neond"
+
+    def get_public_key(self):
+        # Load JWKS from URL
+        response = requests.get(self.jwks_url)
+        jwks = json.loads(response.text)
+        self.keys = jwks['keys']
+
+    def sign_payload(self, payload, public_key):
+        # ... rest of the code ...
 
     def record_hypothesis(self, hypothesis):
-        """Saves agent findings to the cloud finding log for persistent memory."""
-        conn = get_db_connection()
-        cur = conn.cursor()
-        try:
+        # Add the function body here
+        pass
+
+    def get_verse_math(self, surah_id: int):
+        """Returns prefix density ratios for all verses in a Surah."""
+        with self.get_cursor() as cur:
+            cur.execute("""
+                SELECT verse_number, prefix_density_ratio 
+                FROM verse_data WHERE surah_id = %s ORDER BY verse_number
+            """, (surah_id,))
+            return cur.fetchall()
+
+    def fetch_septenary_cluster(self):
+        """Returns Surahs belonging to the mathematical '7' cluster."""
+        with self.get_cursor() as cur:
+            cur.execute("SELECT * FROM surah_master WHERE checksum_cluster_id = 7")
+            return cur.fetchall()
+
+    def create_ticket(self, ticket_id, role, pattern):
+        # ... rest of the code ...
+
+    def log_finding(self, ticket_id, title, payload, score):
+        # ... rest of the code ...
+
+    def push_verses(self, surah_id, verse_tuples):
+        # ... rest of the code ...
+
+    def log_discovery(self, ticket_id: str, title: str, payload: dict, score: float):
+        """Saves a discovery and closes the ticket."""
+        with self.get_cursor() as cur:
             cur.execute("""
                 INSERT INTO c2_finding_log (ticket_id, discovery_title, json_payload, score_boost)
                 VALUES (%s, %s, %s, %s)
-            """, (
-                "example_ticket", 
-                f"{hypothesis.source_scout} Discovery - Surah {hypothesis.surah_refs}",
-                Json({
-                    "scout": hypothesis.source_scout,
-                    "goal": hypothesis.goal_link,
-                    "description": hypothesis.description,
-                    "evidence": hypothesis.evidence_snippets,
-                    "status": "RAW",
-                    "rejection_reason": None
-                }),
-                hypothesis.score
-            ))
-            conn.commit()
-        except Exception as e:
-            print(f"[DB Error]: {e}")
-        finally:
-            cur.close()
-            conn.close()
+            """, (ticket_id, title, Json(payload), score))
+            cur.execute("UPDATE c2_research_ticket SET status = 'Completed' WHERE ticket_id = %s", (ticket_id,))
+        print(f"✅ Discovery Logged: {title} (Ticket: {ticket_id})")
