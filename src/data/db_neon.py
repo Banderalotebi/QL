@@ -3,6 +3,8 @@ import psycopg2
 from psycopg2.extras import RealDictCursor, execute_values
 from dotenv import load_dotenv
 from src.data.db import NeonLabAPI
+import requests
+import json
 
 load_dotenv()
 
