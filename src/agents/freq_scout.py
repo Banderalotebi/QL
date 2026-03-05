@@ -1,6 +1,7 @@
 # src/agents/freq_scout.py
 import os
 from src.data.db_neon import NeonLabAPI
+from src.core.state import ResearchState, Hypothesis
 
 class FreqScout(BaseScout):
     """
@@ -13,6 +14,7 @@ class FreqScout(BaseScout):
         # Log finding
         api = NeonLabAPI()
         api.create_ticket(ticket_id="RUNID-SURAH-FREQ", role="FreqScout", pattern="Frequency Patterns")
+        matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]  # Define matrix as a local variable
         api.log_finding(ticket_id="RUNID-SURAH-FREQ", title="Frequency Patterns", payload={"matrix": matrix}, score=1.0)
 
         # ... rest of the code ...
