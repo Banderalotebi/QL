@@ -38,6 +38,15 @@ class NeonLabAPI:
             cur.execute("SELECT * FROM surah_master WHERE checksum_cluster_id = 7")
             return cur.fetchall()
 
+    def create_ticket(self, ticket_id, role, pattern):
+        # ... rest of the code ...
+
+    def log_finding(self, ticket_id, title, payload, score):
+        # ... rest of the code ...
+
+    def push_verses(self, surah_id, verse_tuples):
+        # ... rest of the code ...
+
     def log_discovery(self, ticket_id: str, title: str, payload: dict, score: float):
         """Saves a discovery and closes the ticket."""
         with self.get_cursor() as cur:
