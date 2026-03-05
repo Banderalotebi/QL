@@ -1,5 +1,6 @@
 # src/core/graph_utils.py
 from langgraph.graph import END, StateGraph
+from src.core.state import ResearchState
 from src.core.state_definitions import (
     _run_ingestion, _run_micro_scout, _run_static_scout,
     _run_linguistic_scout, _run_symbolic_scout, _run_math_scout,
