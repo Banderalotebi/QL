@@ -28,6 +28,16 @@ _synthesizer = Synthesizer()
 
 # ── Node wrappers ─────────────────────────────────────────────────────────────
 
+class ResearchState:
+    def __init__(self, input_surah_numbers, input_focus, data_dir, run_id, raw_hypotheses, rejected_hypotheses, known_dead_ends):
+        self.input_surah_numbers = input_surah_numbers
+        self.input_focus = input_focus
+        self.data_dir = data_dir
+        self.run_id = run_id
+        self.raw_hypotheses = raw_hypotheses
+        self.rejected_hypotheses = rejected_hypotheses
+        self.known_dead_ends = known_dead_ends
+
 def _run_ingestion(state: ResearchState) -> ResearchState:
     from src.data.ingestion import run_ingestion
     return run_ingestion(state)
