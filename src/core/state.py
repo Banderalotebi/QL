@@ -12,6 +12,11 @@ class Hypothesis:
     score: float = 0.0
     surah_refs: List[int] = field(default_factory=list)
 
+@dataclass
+class RejectedHypothesis:
+    hypothesis: Hypothesis
+    reason: str
+
 class ResearchState(TypedDict, total=False):
     surah_numbers: List[int]
     focus: str
@@ -27,5 +32,5 @@ class ResearchState(TypedDict, total=False):
     data_dir: str
     run_id: str
     known_dead_ends: List[Any]
-    rejected_hypotheses: List[Any]
+    rejected_hypotheses: List[RejectedHypothesis]
     lab_report: Dict[str, Any]
