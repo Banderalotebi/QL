@@ -7,6 +7,9 @@ from typing import Sequence
 from src.core.state import ResearchState, Hypothesis
 from src.data.neon_db import NeonDB
 
+# Import the necessary modules to avoid Name Shadowing
+from src.data.db import get_db_connection
+
 _neon_db = NeonDB()  # Add this line to import _neon_db
 
 def occam_score(hypothesis: Hypothesis) -> float:
