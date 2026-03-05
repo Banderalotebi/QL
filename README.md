@@ -113,3 +113,4 @@ Raw Quran Text
 - `data/raw/quran-uthmani-min/` — Uthmani script Quran (per-Surah files)
 - `data/raw/surah_mathematical_patterns.csv` — Pre-computed nearest-neighbor patterns
 - `data/processed/knowledge_graph.json` — Persistent findings + dead-ends (auto-generated)
+# QL
