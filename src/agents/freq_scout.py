@@ -1,6 +1,7 @@
 # src/agents/freq_scout.py
 import os
 from src.data.db_neon import NeonLabAPI
+from src.agents.base_scout import BaseScout
 from src.core.state import ResearchState, Hypothesis
 
 class FreqScout(BaseScout):

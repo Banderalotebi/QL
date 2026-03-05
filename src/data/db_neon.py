@@ -1,4 +1,5 @@
 # src/data/db_neon.py
+import os
 import psycopg2
 import json
 import requests
@@ -17,6 +18,7 @@ class NeonLabAPI:
         self.keys = jwks['keys']
 
     def sign_payload(self, payload, public_key):
+        pass
         # ... rest of the code ...
 
     def record_hypothesis(self, hypothesis):
@@ -43,12 +45,15 @@ class NeonLabAPI:
             return cur.fetchall()
 
     def create_ticket(self, ticket_id, role, pattern):
+        pass
         # ... rest of the code ...
 
     def log_finding(self, ticket_id, title, payload, score):
+        pass
         # ... rest of the code ...
 
     def push_verses(self, surah_id, verse_tuples):
+        pass
         # ... rest of the code ...
 
     def log_discovery(self, ticket_id: str, title: str, payload: dict, score: float):

@@ -1,5 +1,6 @@
 # src/agents/synthesizer.py
 from src.data.neon_db import NeonDB
+from src.core.state import ResearchState
 
 _neon_db = NeonDB()
 

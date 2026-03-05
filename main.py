@@ -1,6 +1,6 @@
 # main.py
 import sys
-from src.core.graph import compile_graph
+from src.core.graph_utils import compile_graph
 from src.data.db_neon import NeonLabAPI
 
 def main():
