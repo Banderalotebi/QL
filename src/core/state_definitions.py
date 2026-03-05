@@ -3,6 +3,15 @@ from __future__ import annotations
 from src.core.state import ResearchState
 from src.data.neon_db import NeonDB
 from src.agents.micro_scout import MicroScout
+from src.agents.static_scout import StaticScout
+from src.agents.linguistic_scout import LinguisticScout
+from src.agents.symbolic_scout import SymbolicScout
+from src.agents.math_scout import MathScout
+from src.agents.freq_scout import FreqScout
+from src.agents.deep_scout import DeepScout
+from src.agents.the_fool import TheFool
+from src.agents.synthesizer import Synthesizer
+from src.agents.alchemist_leader import AlchemistLeader
 
 _neon_db = NeonDB()
 
