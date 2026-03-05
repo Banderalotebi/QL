@@ -102,7 +102,7 @@ def isolate_muqattaat(raw_text: str, surah_number: int) -> list[str]:
 
 # ── Surah file loader ─────────────────────────────────────────────────────────
 
-def load_surah_text(surah_number: int, data_dir: str = "data/raw") -> str | None:
+def load_surah_text(surah_number: int, data_dir: str = "/Users/bander/QL/data") -> str | None:
     """Load raw Quran text for a given Surah number from the dataset."""
     # Construct path to the Surah file
     data_dir_path = Path(data_dir)
@@ -110,6 +110,8 @@ def load_surah_text(surah_number: int, data_dir: str = "data/raw") -> str | None
         data_dir_path / f"Surah_{surah_number}.txt",
         data_dir_path / "quran-uthmani-min" / f"Surah_{surah_number}.txt",
         data_dir_path / f"surah_{surah_number}.txt",
+        data_dir_path / "raw" / f"Surah_{surah_number}.txt",
+        data_dir_path / "raw" / "quran-uthmani-min" / f"Surah_{surah_number}.txt",
     ]
     
     for path in candidates:
