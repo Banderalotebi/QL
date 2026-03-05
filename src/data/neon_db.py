@@ -1,15 +1,14 @@
 # src/data/neon_db.py
-import sqlite3
+import requests
 
 class NeonDB:
     def __init__(self):
-        self.conn = sqlite3.connect("neon.db")
-        self.cursor = self.conn.cursor()
+        self.api_url = "https://ep-rough-river-aedemse4.apirest.c-2.us-east-2.aws.neon.tech/neondb/rest/v1"
 
     def get_rejected_hypotheses(self):
-        self.cursor.execute("SELECT * FROM rejected_hypotheses")
-        return self.cursor.fetchall()
+        response = requests.get(self.api_url + "/rejected_hypotheses")
+        return response.json()
 
     def add_rejected_hypothesis(self, hypothesis):
-        self.cursor.execute("INSERT INTO rejected_hypotheses VALUES (?)", (hypothesis,))
-        self.conn.commit()
+        response = requests.post(self.api_url + "/rejected_hypotheses", json={"hypothesis": hypothesis})
+        return response.json()
