@@ -4,8 +4,7 @@
 from __future__ import annotations
 
 from src.core.graph_utils import build_graph
-
-# ── Agent singletons ──────────────────────────────────────────────────────────
+from langgraph.graph import END, StateGraph
 from src.agents.micro_scout import MicroScout
 from src.agents.static_scout import StaticScout
 from src.agents.linguistic_scout import LinguisticScout
@@ -64,4 +63,33 @@ def _run_synthesizer(state: ResearchState) -> ResearchState:
 # ── Graph builder ─────────────────────────────────────────────────────────────
 
 def build_graph() -> StateGraph:
-    return src.core.graph_utils.build_graph()
+    graph = StateGraph(ResearchState)
+
+    graph.add_node("ingestion", _run_ingestion)
+    graph.add_node("micro_scout", _run_micro_scout)
+    graph.add_node("static_scout", _run_static_scout)
+    graph.add_node("linguistic_scout", _run_linguistic_scout)
+    graph.add_node("symbolic_scout", _run_symbolic_scout)
+    graph.add_node("math_scout", _run_math_scout)
+    graph.add_node("freq_scout", _run_freq_scout)
+    graph.add_node("deep_scout", _run_deep_scout)
+    graph.add_node("the_fool", _run_the_fool)
+    graph.add_node("synthesizer", _run_synthesizer)
+
+    graph.set_entry_point("ingestion")
+    graph.add_edge("ingestion", "micro_scout")
+    graph.add_edge("micro_scout", "static_scout")
+    graph.add_edge("static_scout", "linguistic_scout")
+    graph.add_edge("linguistic_scout", "symbolic_scout")
+    graph.add_edge("symbolic_scout", "math_scout")
+    graph.add_edge("math_scout", "freq_scout")
+    graph.add_edge("freq_scout", "deep_scout")
+    graph.add_edge("deep_scout", "the_fool")
+    graph.add_edge("the_fool", "synthesizer")
+    graph.add_edge("synthesizer", END)
+
+    return graph
+
+
+def compile_graph():
+    return build_graph().compile()

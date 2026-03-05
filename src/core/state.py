@@ -11,7 +11,6 @@ from src.agents.deep_scout import DeepScout
 from src.agents.the_fool import TheFool
 from src.agents.synthesizer import Synthesizer
 
-# ── Agent singletons ──────────────────────────────────────────────────────────
 _micro_scout = MicroScout()
 _static_scout = StaticScout()
 _linguistic_scout = LinguisticScout()
@@ -60,4 +59,4 @@ def _run_synthesizer(state: ResearchState) -> ResearchState:
 # ── Graph builder ─────────────────────────────────────────────────────────────
 
 def build_graph() -> StateGraph:
-    return src.core.state_utils.build_graph()
+    return src.core.state_definitions.build_graph()
