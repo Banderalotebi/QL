@@ -1,6 +1,5 @@
-# src/core/state.py
 import operator
-from typing import TypedDict, List, Dict, Any, Annotated
+from typing import TypedDict, List, Dict, Any, Annotated, Optional
 from dataclasses import dataclass, field
 
 @dataclass
@@ -22,7 +21,7 @@ class ResearchState(TypedDict, total=False):
     surah_numbers: List[int]
     focus: str
     
-    # LangGraph Reducers: operator.add ensures lists append instead of overwrite
+    # LangGraph Reducers: ensures parallel agent results are merged
     raw_hypotheses: Annotated[List[Hypothesis], operator.add]
     survivor_hypotheses: Annotated[List[Hypothesis], operator.add]
     synthesized_theories: Annotated[List[Hypothesis], operator.add]
@@ -31,7 +30,7 @@ class ResearchState(TypedDict, total=False):
     known_dead_ends: Annotated[List[Any], operator.add]
     rejected_hypotheses: Annotated[List[RejectedHypothesis], operator.add]
     
-    # Static info
+    # Run Metadata
     input_surah_numbers: List[int]
     input_focus: str
     data_dir: str

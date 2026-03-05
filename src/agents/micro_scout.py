@@ -1,41 +1,48 @@
-import os
-from src.data.db import record_hypothesis
-from src.utils.tools import Librarian
-from src.core.state import ResearchState
-from langchain.chat_models import ChatOllama
+# src/agents/micro_scout.py
+from langchain_ollama import ChatOllama
+from src.core.state import ResearchState, Hypothesis
+from src.data.db import record_hypothesis, NeonLabAPI
 
 class MicroScout:
     def __init__(self):
-        # Initializing Ollama 3.1 with infinite predict & max context
         self.llm = ChatOllama(
-            model="llama3.1:8b",
+            model="llama3.1:8b", # Upgraded for 128k context & tool calling
             temperature=0.1,
-            num_predict=-1,
-            num_ctx=8192
+            num_ctx=131072
         )
-        
-        # Initialize Librarian
-        self.librarian = Librarian()
+        self.api = NeonLabAPI()
 
     def run(self, state: ResearchState) -> dict:
-        # 1. Get previous research context for the current Surah
-        context = self.librarian.get_context_for_surah(state.surah_id)
-        
-        # 2. Construct the prompt (incorporating the state and librarian data)
-        prompt = f"""
-        Research Task: {state.query}
-        Surah Context: {context}
-        Additional Data: {state.current_findings}
-        
-        Analyze the above and provide a detailed report.
-        """
+        surahs = state.get("surah_numbers", [])
+        run_id = state.get("run_id", "local_run")
+        new_hypotheses = []
 
-        # 3. Invoke the LLM
-        # Assuming you're using LangChain's ChatOllama based on the syntax
-        response = self.llm.invoke(prompt)
+        for s_id in surahs:
+            # 1. Start Event API Loop - Open Ticket
+            self.api.open_ticket(run_id, "MicroScout", f"Acronym Analysis Surah {s_id}")
+            
+            # 2. Get Data Free - Fetch from Neon
+            context = self.api.get_surah_context(s_id)
+            if not context: continue
 
-        # 4. Update and return the state
-        return {
-            "research_notes": response.content,
-            "status": "complete"
-        }
+            # 3. Process with Llama 3.1
+            words = context['content'].split()[:30]
+            prompt = f"Analyze the opening initials for acronym patterns in Surah {s_id}: {' '.join(words)}"
+            response = self.llm.invoke(prompt)
+
+            # 4. Log Discovery - Automatic recording to Neon
+            hyp = Hypothesis(
+                source_scout="MicroScout",
+                goal_link=f"Acronym testing",
+                transformation_steps=1,
+                evidence_snippets=[" ".join(words[:5])],
+                description=response.content.strip(),
+                score=0.8,
+                surah_refs=[s_id]
+            )
+            
+            record_hypothesis(run_id, hyp)
+            new_hypotheses.append(hyp)
+
+        return {"raw_hypotheses": new_hypotheses}
+
