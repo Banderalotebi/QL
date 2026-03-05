@@ -29,65 +29,64 @@ _synthesizer = Synthesizer()
 
 # ── Node wrappers ─────────────────────────────────────────────────────────────
 
-def _run_ingestion(state: ResearchState) -> ResearchState:
+def _run_ingestion(state):
     from src.data.ingestion import run_ingestion
     return run_ingestion(state)
 
-def _run_micro_scout(state: ResearchState) -> ResearchState:
+def _run_micro_scout(state):
     return _micro_scout.run(state)
 
-def _run_static_scout(state: ResearchState) -> ResearchState:
+def _run_static_scout(state):
     return _static_scout.run(state)
 
-def _run_linguistic_scout(state: ResearchState) -> ResearchState:
+def _run_linguistic_scout(state):
     return _linguistic_scout.run(state)
 
-def _run_symbolic_scout(state: ResearchState) -> ResearchState:
+def _run_symbolic_scout(state):
     return _symbolic_scout.run(state)
 
-def _run_math_scout(state: ResearchState) -> ResearchState:
+def _run_math_scout(state):
     return _math_scout.run(state)
 
-def _run_freq_scout(state: ResearchState) -> ResearchState:
+def _run_freq_scout(state):
     return _freq_scout.run(state)
 
-def _run_deep_scout(state: ResearchState) -> ResearchState:
+def _run_deep_scout(state):
     return _deep_scout.run(state)
 
-def _run_the_fool(state: ResearchState) -> ResearchState:
+def _run_the_fool(state):
     return _the_fool.run(state)
 
-def _run_synthesizer(state: ResearchState) -> ResearchState:
+def _run_synthesizer(state):
     return _synthesizer.run(state)
 
 
 # ── Graph builder ─────────────────────────────────────────────────────────────
 
 def build_graph() -> StateGraph:
-    graph = StateGraph(ResearchState)
+    graph = StateGraph()
+    # graph.add_node("ingestion", _run_ingestion)
+    # graph.add_node("micro_scout", _run_micro_scout)
+    # graph.add_node("static_scout", _run_static_scout)
+    # graph.add_node("linguistic_scout", _run_linguistic_scout)
+    # graph.add_node("symbolic_scout", _run_symbolic_scout)
+    # graph.add_node("math_scout", _run_math_scout)
+    # graph.add_node("freq_scout", _run_freq_scout)
+    # graph.add_node("deep_scout", _run_deep_scout)
+    # graph.add_node("the_fool", _run_the_fool)
+    # graph.add_node("synthesizer", _run_synthesizer)
 
-    graph.add_node("ingestion", _run_ingestion)
-    graph.add_node("micro_scout", _run_micro_scout)
-    graph.add_node("static_scout", _run_static_scout)
-    graph.add_node("linguistic_scout", _run_linguistic_scout)
-    graph.add_node("symbolic_scout", _run_symbolic_scout)
-    graph.add_node("math_scout", _run_math_scout)
-    graph.add_node("freq_scout", _run_freq_scout)
-    graph.add_node("deep_scout", _run_deep_scout)
-    graph.add_node("the_fool", _run_the_fool)
-    graph.add_node("synthesizer", _run_synthesizer)
-
-    graph.set_entry_point("ingestion")
-    graph.add_edge("ingestion", "micro_scout")
-    graph.add_edge("micro_scout", "static_scout")
-    graph.add_edge("static_scout", "linguistic_scout")
-    graph.add_edge("linguistic_scout", "symbolic_scout")
-    graph.add_edge("symbolic_scout", "math_scout")
-    graph.add_edge("math_scout", "freq_scout")
-    graph.add_edge("freq_scout", "deep_scout")
-    graph.add_edge("deep_scout", "the_fool")
-    graph.add_edge("the_fool", "synthesizer")
-    graph.add_edge("synthesizer", END)
+    # graph.set_entry_point("ingestion")
+    # graph.add_edge("ingestion", "micro_scout")
+    # graph.add_edge("micro_scout", "static_scout")
+    # graph.add_edge("static_scout", "linguistic_scout")
+    # graph.add_edge("linguistic_scout", "symbolic_scout")
+    # graph.add_edge("symbolic_scout", "math_scout")
+    # graph.add_edge("math_scout", "freq_scout")
+    # graph.add_edge("freq_scout", "deep_scout")
+    # graph.add_edge("deep_scout", "the_fool")
+    # graph.add_edge("the_fool", "synthesizer")
+    # graph.add_edge("synthesizer", END)
 
     return graph
 
