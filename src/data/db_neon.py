@@ -57,3 +57,12 @@ class NeonLabAPI:
             """, (ticket_id, title, Json(payload), score))
             cur.execute("UPDATE c2_research_ticket SET status = 'Completed' WHERE ticket_id = %s", (ticket_id,))
         print(f"✅ Discovery Logged: {title} (Ticket: {ticket_id})")
+
+    def record_hypothesis(self, hypothesis):
+        # Add the function body here
+        with self.get_cursor() as cur:
+            cur.execute("""
+                INSERT INTO c2_research_hypothesis (hypothesis)
+                VALUES (%s)
+            """, (hypothesis,))
+        print(f"✅ Hypothesis Recorded: {hypothesis}")
