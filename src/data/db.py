@@ -1,11 +1,12 @@
 # src/data/db.py
 import sqlite3
+import requests
 
 class NeonLabAPI:
     def __init__(self):
         self.conn = sqlite3.connect("neon.db")
-        self.cursor = self.conn.cursor()
+        self.api_url = "https://ep-rough-river-aedemse4.apirest.c-2.us-east-2.aws.neon.tech/neondb/rest/v1"
 
     def record_hypothesis(self, hypothesis):
-        # implementation of record_hypothesis function
-        pass
+        response = requests.post(self.api_url + "/hypotheses", json={"hypothesis": hypothesis})
+        return response.json()
