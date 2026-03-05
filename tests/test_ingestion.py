@@ -5,7 +5,7 @@ Tests for the dual-layer ingestion pipeline.
 """
 
 import pytest
-from src.data.ingestion import extract_rasm, isolate_muqattaat, ingest_surah
+from src.data.ingestion import extract_rasm_strips_diacritics, isolate_muqattaat, ingest_surah
 from src.utils.arabic import strip_basmalah, arabic_letters_only, detect_muqattaat_in_text
 
 
@@ -16,14 +16,14 @@ def test_extract_rasm_strips_diacritics():
     # Expected result without diacritics
     expected = "بسم الله الرحمن الرحيم"
     
-    result = extract_rasm(text_with_diacritics)
+    result = extract_rasm_strips_diacritics(text_with_diacritics)
     assert result == expected, f"Expected '{expected}', got '{result}'"
 
 
 def test_isolate_muqattaat_surah_2():
     """Test that isolate_muqattaat returns correct sequence for Surah 2 (الم)."""
     # Sample text from Surah 2 starting with الم
-    sample_text = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ الم ذَٰلِكَ الْكِتَابُ لَا رَيْبَ فِيهِ"
+    sample_text = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ الم ذَٰلِكَ الْكِتَابُ"
     
     result = isolate_muqattaat(sample_text, 2)
     assert result == ["الم"], f"Expected ['الم'], got {result}"
