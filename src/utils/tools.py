@@ -1,6 +1,11 @@
 import sqlite3
 from src.utils.abjad import ABJAD
 
+def create_header_panel():
+    """Creates a header panel for the application."""
+    # implementation of create_header_panel function
+    pass
+
 def abjad_calculator(arabic_string: str) -> int:
     """Calculates the exact Gematria value of a word/verse without 'guessing'."""
     abjad_value = 0
