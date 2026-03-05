@@ -1,15 +1,4 @@
-# src/core/scorer.py
-# Occam Razor scoring for the Muqattaat Cryptanalytic Lab
-
-import math
-import requests
-from typing import Sequence
-from src.core.state import ResearchState
-from src.data.neon_db import NeonDB
-
-_neon_db = NeonDB()
-
-# ...
+from src.core.state import Hypothesis
 
 def compute_evidence_weight(hypothesis: Hypothesis) -> float:
     """
