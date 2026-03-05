@@ -20,17 +20,17 @@ class TheFool:
         
         # Iterate over the raw hypotheses
         for h in raw_hypotheses:
-            # Use Ollama to try to logically dismantle the hypothesis
-            ollama_response = requests.post("https://api.chatollama.com/v1", json={"prompt": h.goal_link})
-            ollama_response.raise_for_status()
-            ollama_response_json = ollama_response.json()
+            # Check if the hypothesis goal_link contains any "Meaning Anchors"
+            if any(keyword in h.goal_link.lower() for keyword in ["muqattaat dna", "jeddah coordinates", "dna base pairs"]):
+                # Reward the hypothesis with a bonus score
+                h.score += 0.1
             
-            # Check if the Ollama response contains any logical flaws
-            if any(flaw in ollama_response_json["output"] for flaw in ["circular reasoning", "insufficient evidence"]):
+            # Check if the hypothesis fails to account for the Meccan/Medinan split or the Surah 68 "Literal Zone" cut-off
+            if (h.surah_refs not in MECCAN_MUQATTAAT and h.surah_refs not in MEDINAN_MUQATTAAT) or h.surah_refs > 68:
                 # Reject the hypothesis
                 rejected.append(RejectedHypothesis(
                     hypothesis=h,
-                    reason="Logical flaw detected",
+                    reason="Failed to account for Meccan/Medinan split or Surah 68 'Literal Zone' cut-off",
                     auditor="TheFool"
                 ))
             else:
