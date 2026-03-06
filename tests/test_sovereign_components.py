@@ -324,6 +324,117 @@ class TestMeritocracyAPI:
         assert "data" in data
 
 
+class TestBroadcastAPI:
+    """Test suite for broadcast API endpoints"""
+    
+    def setup_method(self):
+        """Setup test client"""
+        from fastapi.testclient import TestClient
+        self.client = TestClient(app)
+    
+    def test_broadcast_knowledge(self):
+        """Test broadcast knowledge endpoint"""
+        response = self.client.post(
+            "/broadcast",
+            params={
+                "tipo": "test",
+                "content": "Test message",
+                "priority": "normal",
+                "sender": "test_agent"
+            }
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "broadcasted"
+        assert "message" in data
+        assert "message_id" in data["message"]
+    
+    def test_broadcast_history(self):
+        """Test broadcast history endpoint"""
+        # First send a broadcast
+        self.client.post(
+            "/broadcast",
+            params={
+                "tipo": "test",
+                "content": "Test message",
+                "sender": "test_agent"
+            }
+        )
+        
+        # Then check history
+        response = self.client.get("/broadcast/history")
+        assert response.status_code == 200
+        data = response.json()
+        assert "history" in data
+    
+    def test_broadcast_pending(self):
+        """Test pending broadcasts endpoint"""
+        response = self.client.get("/broadcast/pending")
+        assert response.status_code == 200
+        data = response.json()
+        assert "pending" in data
+
+
+class TestPatternQueueAPI:
+    """Test suite for pattern queue API endpoints"""
+    
+    def setup_method(self):
+        """Setup test client"""
+        from fastapi.testclient import TestClient
+        self.client = TestClient(app)
+    
+    def test_pattern_stats(self):
+        """Test pattern statistics endpoint"""
+        response = self.client.get("/patterns/stats")
+        assert response.status_code == 200
+        data = response.json()
+        assert "total_patterns" in data
+    
+    def test_queue_execute(self):
+        """Test queue execution endpoint"""
+        response = self.client.post("/patterns/queue/execute")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "executed"
+    
+    def test_queue_clear(self):
+        """Test queue clear endpoint"""
+        response = self.client.post("/patterns/queue/clear")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "cleared"
+
+
+class TestControlAPI:
+    """Test suite for control API endpoints"""
+    
+    def setup_method(self):
+        """Setup test client"""
+        from fastapi.testclient import TestClient
+        self.client = TestClient(app)
+    
+    def test_control_status(self):
+        """Test control status endpoint"""
+        response = self.client.get("/control/status")
+        assert response.status_code == 200
+        data = response.json()
+        assert "pause_status" in data or "status" in data
+    
+    def test_pause_all(self):
+        """Test pause all endpoint"""
+        response = self.client.post("/control/pause-all")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "paused_all"
+    
+    def test_resume_all(self):
+        """Test resume all endpoint"""
+        response = self.client.post("/control/resume-all")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "resumed_all"
+
+
 # ──────────────────────────────────────────────────────────────────
 # RUN TESTS
 # ──────────────────────────────────────────────────────────────────

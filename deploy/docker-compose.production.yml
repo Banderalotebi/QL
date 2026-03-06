@@ -1,0 +1,183 @@
+
+version: '3.8'
+
+services:
+  # ===================
+  # API Server (FastAPI)
+  # ===================
+  api:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: ql-api
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - APP_ENV=production
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-password}
+    env_file:
+      - ../.env
+    volumes:
+      - ../data:/workspaces/QL/data
+      - ../logs:/workspaces/QL/logs
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - ql-network
+
+  # ===================
+  # Streamlit Dashboard
+  # ===================
+  dashboard:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: ql-dashboard
+    ports:
+      - "8501:8501"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_HEADLESS=true
+      - STREAMLIT_SERVER_ENABLE_CORS=false
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-password}
+    env_file:
+      - ../.env
+    volumes:
+      - ../data/processed:/workspaces/QL/data/processed
+      - ../logs:/workspaces/QL/logs
+    depends_on:
+      - api
+      - neo4j
+    restart: unless-stopped
+    networks:
+      - ql-network
+
+  # ===================
+  # Continuous Worker (24/7)
+  # ===================
+  worker:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: ql-worker
+    environment:
+      - PYTHONUNBUFFERED=1
+      - APP_ENV=production
+      - HIVE_BATCH_SIZE=${HIVE_BATCH_SIZE:-3}
+      - HIVE_INTERVAL=${HIVE_INTERVAL:-300}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-password}
+    env_file:
+      - ../.env
+    volumes:
+      - ../data:/workspaces/QL/data
+      - ../logs:/workspaces/QL/logs
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    restart: unless-stopped
+    # Run continuously - no health check needed for long-running worker
+    command: >
+      python -c "
+      import sys
+      sys.path.insert(0, '/workspaces/QL')
+      from hive_continuous import ContinuousHiveRunner
+      runner = ContinuousHiveRunner(
+          batch_size=int('${HIVE_BATCH_SIZE:-3}'),
+          loop_interval=int('${HIVE_INTERVAL:-300}')
+      )
+      runner.run_continuous()
+      "
+    networks:
+      - ql-network
+
+  # ===================
+  # Neo4j Database
+  # ===================
+  neo4j:
+    image: neo4j:5.14-community
+    container_name: ql-neo4j
+    ports:
+      - "7474:7474"  # Browser UI
+      - "7687:7687"  # Bolt protocol
+    environment:
+      - NEO4J_AUTH=neo4j/${NEO4J_PASSWORD:-password}
+      - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_server_memory_heap_initial__size=512m
+      - NEO4J_server_memory_heap_max__size=2G
+      - NEO4J_server.default__listen__address=0.0.0.0
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "${NEO4J_PASSWORD:-password}", "RETURN 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - ql-network
+
+  # ===================
+  # PostgreSQL (Optional)
+  # ===================
+  postgres:
+    image: postgres:15-alpine
+    container_name: ql-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-ql}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-ql_password}
+      - POSTGRES_DB=${POSTGRES_DB:-ql_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - ql-network
+
+  # ===================
+  # Redis (Optional - for caching)
+  # ===================
+  redis:
+    image: redis:7-alpine
+    container_name: ql-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      - ql-network
+
+networks:
+  ql-network:
+    driver: bridge
+
+volumes:
+  neo4j_data:
+  neo4j_logs:
+  postgres_data:
+  redis_data:
+

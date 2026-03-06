@@ -214,25 +214,6 @@ class PatternWebProxy:
         return getattr(self._real, name)
 
 
-def pattern_queue_status():
-    if USE_API:
-        return api_get("/patterns/queue")
-    return pattern_web.get_queue_status()
-
-
-def pattern_execute_queue():
-    if USE_API:
-        return api_post("/patterns/queue/execute")
-    return pattern_web.execute_queue()
-
-
-def pattern_clear_queue():
-    if USE_API:
-        return api_post("/patterns/queue/clear")
-    else:
-        pattern_web.execution_queue.clear()
-        return {}
-
 # Control wrappers
 
 def control_pause_all():
@@ -255,13 +236,13 @@ def control_status():
 
 def control_pause_node(node_name):
     if USE_API:
-        return api_post("/control/pause-node", params={"node_name": node_name})
+        return api_post(f"/control/pause/{node_name}")
     return graph_controller.pause_execution(node_name)
 
 
 def control_resume_node(node_name):
     if USE_API:
-        return api_post("/control/resume-node", params={"node_name": node_name})
+        return api_post(f"/control/resume/{node_name}")
     return graph_controller.resume_execution(node_name)
 
 # Broadcast wrappers
@@ -280,7 +261,7 @@ def broadcast_pending():
 
 def broadcast_send(message, agent_id="system"):
     if USE_API:
-        return api_post("/broadcast/send", data={"message": message, "agent_id": agent_id})
+        return api_post("/broadcast", data={"content": message, "sender": agent_id, "tipo": "message", "priority": "normal"})
     return _hive().broadcast_knowledge(message, agent_id)
 
 
