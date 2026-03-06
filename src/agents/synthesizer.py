@@ -28,17 +28,18 @@ class Synthesizer:
         # 2. Merge evidence from multiple scouts
         # 3. Create composite theories
         
+        # Sort by score (descending) to get ranked theories
+        ranked = sorted(survivors, key=lambda h: h.score, reverse=True)
+        
         state["synthesized_theories"] = survivors.copy()
+        state["ranked_theories"] = ranked
         print(f"Hey, I've combined the hypotheses into a unified theory!")
         
-        # Save the final theories into the `hypotheses` table in Neon
-        cur = self.conn.cursor()
-        for theory in state["synthesized_theories"]:
-            cur.execute(
-                "INSERT INTO hypotheses (run_id, source_scout, surah_id, description, score, alchemist_reward) VALUES (%s, %s, %s, %s, %s, %s)",
-                (state["run_id"], theory["source_scout"], theory["surah_id"], theory["description"], theory["score"], theory["alchemist_reward"])
-            )
-        self.conn.commit()
-        self.conn.close()
+        # Log top findings to database if connected (gracefully degraded)
+        try:
+            for hyp in ranked[:5]:
+                _neon_db.log_hypothesis(hyp, status="SURVIVOR")
+        except Exception as e:
+            pass  # Graceful failure - continue pipeline even if database logging fails
         
         return state

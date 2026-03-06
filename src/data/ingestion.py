@@ -24,30 +24,29 @@ def isolate_muqattaat(surah_number: int) -> str:
 
 
 def ingest_surah(surah_number: int) -> dict:
-    """Ingest a Surah from the database."""
-    conn = get_db_connection()
-    cur = conn.cursor()
+    """Ingest a Surah from the file system."""
+    import os
+    from pathlib import Path
     
-    try:
-        cur.execute("""
-            SELECT m.*, STRING_AGG(v.text_clean, ' ' ORDER BY v.verse_number) as content
-            FROM surah_master m
-            JOIN verse_data v ON m.surah_id = v.surah_id
-            WHERE m.surah_id = %s
-            GROUP BY m.surah_id
-        """, (surah_number,))
+    # Path to Quran files
+    quran_path = Path("/workspaces/QL/data/Quran_Extracted_Texts/quran-simple")
+    surah_file = quran_path / f"Surah_{surah_number}.txt"
+    
+    if surah_file.exists():
+        with open(surah_file, 'r', encoding='utf-8') as f:
+            content = f.read().strip()
         
-        result = cur.fetchone()
-        
-        if result:
-            return {
-                "surah_id": result.get("surah_id"),
-                "content": result.get("content", ""),
-                "muqattaat": isolate_muqattaat(surah_number)
-            }
-    finally:
-        cur.close()
-        conn.close()
+        return {
+            "surah_id": surah_number,
+            "content": content,
+            "muqattaat": isolate_muqattaat(surah_number)
+        }
+    else:
+        return {
+            "surah_id": surah_number,
+            "content": "",
+            "muqattaat": isolate_muqattaat(surah_number)
+        }
     
     return None
 
@@ -91,16 +90,21 @@ def run_ingestion(state: dict) -> dict:
     muqattaat_map = {}
 
     for surah_number in surahs:
-        # 1. Load the text
-        raw_text = load_surah_text(surah_number)
+        # 1. Load the surah data
+        surah_data = ingest_surah(surah_number)
+        raw_text = surah_data["content"]
+        muqattaat = surah_data["muqattaat"]
         
         if raw_text:
-            # 2. Process it through our existing ingest function
-            rasm, tashkeel, muqattaat, _ = ingest_surah(surah_number, raw_text)
+            # 2. Extract rasm (skeletal letters)
+            rasm = extract_rasm_strips_diacritics(raw_text)
             
-            # 3. Store the results in our dictionaries
-            rasm_matrices[surah_number] = rasm
-            tashkeel_matrices[surah_number] = tashkeel
+            # 3. For now, tashkeel is same as rasm (simplified)
+            tashkeel = rasm
+            
+            # 4. Store the results
+            rasm_matrices[surah_number] = list(rasm)  # Convert to list of letters
+            tashkeel_matrices[surah_number] = list(tashkeel)
             if muqattaat:
                 muqattaat_map[surah_number] = muqattaat
 

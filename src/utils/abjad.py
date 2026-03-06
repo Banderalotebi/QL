@@ -18,9 +18,7 @@ ABJAD: dict[str, int] = {
 
 def abjad_value_of_sequence(sequence: str) -> int:
     """Calculate the total Abjad value of an Arabic letter sequence."""
-    from src.utils.arabic import arabic_letters_only
-    letters = arabic_letters_only(sequence)
-    return sum(ABJAD.get(letter, 0) for letter in letters)
+    return sum(ABJAD.get(letter, 0) for letter in sequence)
 
 
 def calculate_abjad_value(text: str) -> int:

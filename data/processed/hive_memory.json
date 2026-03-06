@@ -1,0 +1,47 @@
+{
+  "verified_patterns": [],
+  "known_errors": [],
+  "style_guide": {},
+  "optimization_tips": [],
+  "broadcast_history": [
+    {
+      "message_id": "MSG_1772773674.584633",
+      "type": "pattern_discovery",
+      "priority": "normal",
+      "content": "Test broadcast",
+      "sender": "system",
+      "timestamp": "2026-03-06T05:07:54.584642",
+      "acknowledged_by": []
+    },
+    {
+      "message_id": "MSG_1772773674.661507",
+      "type": "test",
+      "priority": "normal",
+      "content": "Integration test",
+      "sender": "system",
+      "timestamp": "2026-03-06T05:07:54.661539",
+      "acknowledged_by": []
+    }
+  ],
+  "pending_broadcasts": [
+    {
+      "message_id": "MSG_1772773674.584633",
+      "type": "pattern_discovery",
+      "priority": "normal",
+      "content": "Test broadcast",
+      "sender": "system",
+      "timestamp": "2026-03-06T05:07:54.584642",
+      "acknowledged_by": []
+    },
+    {
+      "message_id": "MSG_1772773674.661507",
+      "type": "test",
+      "priority": "normal",
+      "content": "Integration test",
+      "sender": "system",
+      "timestamp": "2026-03-06T05:07:54.661539",
+      "acknowledged_by": []
+    }
+  ],
+  "broadcasts": []
+}

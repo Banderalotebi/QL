@@ -37,6 +37,21 @@ def display_dataset_overview():
         letters = len(muqattaat)
         table.add_row(str(surah), muqattaat, str(letters))
     
-    console.print(table)
-    console.print(f"... and {len(MUQATTAAT_SURAH_NUMBERS) - 10} more Surahs" if len(MUQATTAAT_SURAH_NUMBERS) > 10 else "")
-    return None
+def abjad_calculator(text):
+    """Calculate Abjad numerical value of Arabic text."""
+    abjad_values = {
+        'ا': 1, 'ب': 2, 'ج': 3, 'د': 4, 'ه': 5, 'و': 6,
+        'ز': 7, 'ح': 8, 'ط': 9, 'ي': 10, 'ك': 20, 'ل': 30,
+        'م': 40, 'ن': 50, 'س': 60, 'ع': 70, 'ف': 80, 'ص': 90,
+        'ق': 100, 'ر': 200, 'ش': 300, 'ت': 400, 'ث': 500,
+        'خ': 600, 'ذ': 700, 'ض': 800, 'ظ': 900, 'غ': 1000
+    }
+    total = 0
+    for char in text:
+        total += abjad_values.get(char, 0)
+    return total
+
+def librarian_get_knowledge(query):
+    """Mock librarian function for knowledge retrieval."""
+    # Placeholder implementation
+    return f"Knowledge for query: {query}"
