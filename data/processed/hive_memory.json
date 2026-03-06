@@ -21,6 +21,24 @@
       "sender": "system",
       "timestamp": "2026-03-06T05:07:54.661539",
       "acknowledged_by": []
+    },
+    {
+      "message_id": "MSG_1772797986.278269",
+      "type": "test",
+      "priority": "normal",
+      "content": "Test message",
+      "sender": "test_agent",
+      "timestamp": "2026-03-06T11:53:06.278282",
+      "acknowledged_by": []
+    },
+    {
+      "message_id": "MSG_1772797986.424408",
+      "type": "test",
+      "priority": "normal",
+      "content": "Test message",
+      "sender": "test_agent",
+      "timestamp": "2026-03-06T11:53:06.424419",
+      "acknowledged_by": []
     }
   ],
   "pending_broadcasts": [
@@ -40,6 +58,24 @@
       "content": "Integration test",
       "sender": "system",
       "timestamp": "2026-03-06T05:07:54.661539",
+      "acknowledged_by": []
+    },
+    {
+      "message_id": "MSG_1772797986.278269",
+      "type": "test",
+      "priority": "normal",
+      "content": "Test message",
+      "sender": "test_agent",
+      "timestamp": "2026-03-06T11:53:06.278282",
+      "acknowledged_by": []
+    },
+    {
+      "message_id": "MSG_1772797986.424408",
+      "type": "test",
+      "priority": "normal",
+      "content": "Test message",
+      "sender": "test_agent",
+      "timestamp": "2026-03-06T11:53:06.424419",
       "acknowledged_by": []
     }
   ],

@@ -1,0 +1,87 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+venv/
+env/
+ENV/
+.venv
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Node (for playwright tests)
+node_modules/
+package-lock.json
+
+# Data files (large)
+data/
+!data/processed/
+
+# Research
+researches/
+my-playwright-project/
+
+# CI/CD
+.github/
+*.yml
+*.yaml
+!Dockerfile
+!docker-compose.yml
+
+# Documentation
+*.md
+!README.md
+
+# Temp
+tmp/
+temp/
+*.tmp
+
