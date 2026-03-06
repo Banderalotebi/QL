@@ -30,6 +30,7 @@ class ResearchState(TypedDict, total=False):
     survivor_hypotheses: Annotated[List[Hypothesis], add]
     synthesized_theories: Annotated[List[Hypothesis], add]
     scored_theories: Annotated[List[Hypothesis], add]
+    ranked_theories: List[Hypothesis]
     errors: Annotated[List[str], add]
     known_dead_ends: Annotated[List[Any], add]
     rejected_hypotheses: Annotated[List[RejectedHypothesis], add]

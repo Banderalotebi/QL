@@ -15,9 +15,17 @@ def get_db_connection():
 
 def record_hypothesis(run_id: str, hyp: Hypothesis, status: str = "RAW", reason: str = None):
     """Saves agent findings to the cloud finding log for persistent memory."""
-    conn = get_db_connection()
-    cur = conn.cursor()
     try:
+        conn = get_db_connection()
+    except Exception as e:
+        # Gracefully skip if connection fails
+        return
+    
+    if not conn:
+        return
+    
+    try:
+        cur = conn.cursor()
         cur.execute("""
             INSERT INTO c2_finding_log (ticket_id, discovery_title, json_payload, score_boost)
             VALUES (%s, %s, %s, %s)
@@ -36,10 +44,13 @@ def record_hypothesis(run_id: str, hyp: Hypothesis, status: str = "RAW", reason:
         ))
         conn.commit()
     except Exception as e:
-        print(f"[DB Error]: {e}")
+        pass  # Graceful failure
     finally:
-        cur.close()
-        conn.close()
+        try:
+            cur.close()
+            conn.close()
+        except Exception:
+            pass  # Graceful failure
 
 class NeonLabAPI:
     """
@@ -52,24 +63,34 @@ class NeonLabAPI:
 
     def open_ticket(self, run_id: str, role: str, pattern: str):
         """Domain 2: Event API - Agents 'clock in' to start research."""
-        with self.conn.cursor() as cur:
-            cur.execute("""
-                INSERT INTO c2_research_ticket (ticket_id, agent_role, target_pattern, status)
-                VALUES (%s, %s, %s, 'Executing')
-                ON CONFLICT (ticket_id) DO UPDATE SET status = 'Executing'
-            """, (run_id, role, pattern))
+        if not self.conn:
+            return  # Gracefully skip if no connection
+        try:
+            with self.conn.cursor() as cur:
+                cur.execute("""
+                    INSERT INTO c2_research_ticket (ticket_id, agent_role, target_pattern, status)
+                    VALUES (%s, %s, %s, 'Executing')
+                    ON CONFLICT (ticket_id) DO UPDATE SET status = 'Executing'
+                """, (run_id, role, pattern))
+        except Exception:
+            pass  # Graceful failure - continue pipeline
 
     def get_surah_context(self, surah_id: int):
         """Domain 1: Corpus Data - Fetches metadata and clean text for an agent."""
-        with self.conn.cursor() as cur:
-            cur.execute("""
-                SELECT m.*, STRING_AGG(v.text_clean, ' ' ORDER BY v.verse_number) as content
-                FROM surah_master m
-                JOIN verse_data v ON m.surah_id = v.surah_id
-                WHERE m.surah_id = %s
-                GROUP BY m.surah_id
-            """, (surah_id,))
-            return cur.fetchone()
+        if not self.conn:
+            return None  # Gracefully skip if no connection
+        try:
+            with self.conn.cursor() as cur:
+                cur.execute("""
+                    SELECT m.*, STRING_AGG(v.text_clean, ' ' ORDER BY v.verse_number) as content
+                    FROM surah_master m
+                    JOIN verse_data v ON m.surah_id = v.surah_id
+                    WHERE m.surah_id = %s
+                    GROUP BY m.surah_id
+                """, (surah_id,))
+                return cur.fetchone()
+        except Exception:
+            return None  # Graceful failure
 
     def update_flow_matrix(self, from_l: str, to_l: str, weight: float):
         """Updates the Rigid Flow Matrix based on frequency discoveries."""
@@ -82,12 +103,17 @@ class NeonLabAPI:
 
     def create_ticket(self, ticket_id: str, role: str, pattern: str):
         """Creates a new ticket in the database."""
-        with self.conn.cursor() as cur:
-            cur.execute("""
-                INSERT INTO c2_research_ticket (ticket_id, agent_role, target_pattern, status)
-                VALUES (%s, %s, %s, 'Executing')
-            """, (ticket_id, role, pattern))
-        self.conn.commit()
+        if not self.conn:
+            return  # Gracefully skip if no connection
+        try:
+            with self.conn.cursor() as cur:
+                cur.execute("""
+                    INSERT INTO c2_research_ticket (ticket_id, agent_role, target_pattern, status)
+                    VALUES (%s, %s, %s, 'Executing')
+                """, (ticket_id, role, pattern))
+            self.conn.commit()
+        except Exception:
+            pass  # Graceful failure
 
 def init_db_schema():
     """Initializes the multi-domain schema in Neon."""

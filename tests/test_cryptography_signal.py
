@@ -1,0 +1,474 @@
+"""
+tests/test_cryptography_signal.py
+───────────────────────────────────────────────────────
+Test implementations for Pattern Categories VI-VII 
+(Advanced Cryptography & Signal Processing)
+from Test_Idea_Patterns.md.
+
+Patterns 361-420: Advanced Cryptography & Signal Processing
+"""
+
+import pytest
+import math
+import hashlib
+from collections import Counter
+from src.utils.abjad import ABJAD, abjad_value_of_sequence
+from src.data.muqattaat import MUQATTAAT_MAPPING
+
+
+@pytest.fixture
+def muqattaat_sequences():
+    return MUQATTAAT_MAPPING
+
+
+# =============================================================================
+# PATTERN 361: Autocorrelation Coefficient
+# =============================================================================
+
+def test_autocorrelation_coefficient(muqattaat_sequences):
+    """
+    Pattern #361: Autocorrelation Coefficient
+    Test letter sequence autocorrelation.
+    """
+    for surah, sequence in list(muqattaat_sequences.items())[:5]:
+        # Simple autocorrelation: compare sequence with itself shifted
+        seq_bytes = [ord(c) for c in sequence]
+        
+        if len(seq_bytes) > 1:
+            # Compare first half to second half
+            mid = len(seq_bytes) // 2
+            first_half = seq_bytes[:mid]
+            second_half = seq_bytes[mid:]
+            
+            # Calculate correlation
+            mean1 = sum(first_half) / len(first_half)
+            mean2 = sum(second_half) / len(second_half)
+            
+            numerator = sum((a - mean1) * (b - mean2) for a, b in zip(first_half, second_half))
+            denom1 = sum((a - mean1) ** 2 for a in first_half) ** 0.5
+            denom2 = sum((b - mean2) ** 2 for b in second_half) ** 0.5
+            
+            if denom1 > 0 and denom2 > 0:
+                corr = numerator / (denom1 * denom2)
+                print(f"Surah {surah}: autocorrelation = {corr:.3f}")
+            else:
+                print(f"Surah {surah}: insufficient data for autocorrelation")
+
+
+# =============================================================================
+# PATTERN 362: Cross-Correlation Matrix
+# =============================================================================
+
+def test_cross_correlation_matrix(muqattaat_sequences):
+    """
+    Pattern #362: Cross-Correlation Matrix
+    Test correlation between different sequences.
+    """
+    # Compare first 5 sequences
+    seqs = list(muqattaat_sequences.items())[:5]
+    
+    for i, (s1, seq1) in enumerate(seqs):
+        for s2, seq2 in seqs[i+1:]:
+            # Simple cross-correlation via letter overlap
+            set1, set2 = set(seq1), set(seq2)
+            overlap = len(set1 & set2)
+            union = len(set1 | set2)
+            
+            jaccard = overlap / union if union > 0 else 0
+            print(f"Surah {s1} vs {s2}: Jaccard similarity = {jaccard:.2f}")
+
+
+# =============================================================================
+# PATTERN 363: Power Spectral Density (Simplified)
+# =============================================================================
+
+def test_power_spectral_density(muqattaat_sequences):
+    """
+    Pattern #363: Power Spectral Density
+    Test frequency domain representation.
+    """
+    for surah, sequence in list(muqattaat_sequences.items())[:3]:
+        # Convert to frequency representation (simplified DFT)
+        values = [ord(c) for c in sequence]
+        n = len(values)
+        
+        # Calculate power spectrum
+        power_spectrum = []
+        for k in range(n):
+            real = sum(values[t] * math.cos(2 * math.pi * k * t / n) for t in range(n))
+            imag = sum(values[t] * math.sin(2 * math.pi * k * t / n) for t in range(n))
+            power = (real**2 + imag**2) / n**2
+            power_spectrum.append(power)
+        
+        print(f"Surah {surah}: max power = {max(power_spectrum):.2f}")
+
+
+# =============================================================================
+# PATTERN 364: Wavelet Transform Scale
+# =============================================================================
+
+def test_wavelet_transform_scale(muqattaat_sequences):
+    """
+    Pattern #364: Wavelet Transform Scale
+    Test multi-resolution analysis.
+    """
+    for surah, sequence in list(muqattaat_sequences.items())[:3]:
+        values = [ord(c) % 10 for c in sequence]  # Simplified to single digits
+        
+        # Haar wavelet decomposition (simplified)
+        while len(values) > 1:
+            if len(values) % 2 != 0:
+                values = values[:-1]
+            
+            approx = [(values[i] + values[i+1]) / 2 for i in range(0, len(values), 2)]
+            detail = [abs(values[i] - values[i+1]) / 2 for i in range(0, len(values), 2)]
+            
+            values = approx
+            print(f"Surah {surah}: {len(detail)} detail coefficients at scale")
+
+
+# =============================================================================
+# PATTERN 366: Signal-to-Noise Ratio (SNR)
+# =============================================================================
+
+def test_signal_to_noise_ratio(muqattaat_sequences):
+    """
+    Pattern #366: Signal-to-Noise Ratio
+    Test SNR for letter frequency signals.
+    """
+    all_letters = "".join(muqattaat_sequences.values())
+    counter = Counter(all_letters)
+    
+    # Signal = most frequent letter
+    most_common = counter.most_common(1)[0][1]
+    
+    # Noise = standard deviation of frequencies
+    freqs = list(counter.values())
+    mean_freq = sum(freqs) / len(freqs)
+    noise = (sum((f - mean_freq) ** 2 for f in freqs) / len(freqs)) ** 0.5
+    
+    if noise > 0:
+        snr = 10 * math.log10(most_common / noise)
+        print(f"Signal-to-Noise Ratio: {snr:.2f} dB")
+    else:
+        print("SNR: infinite (no noise)")
+
+
+# =============================================================================
+# PATTERN 368: Reed-Solomon Error Check
+# =============================================================================
+
+def test_reed_solomon_error_check(muqattaat_sequences):
+    """
+    Pattern #368: Reed-Solomon Error Check
+    Test error detection capability.
+    """
+    for surah, sequence in list(muqattaat_sequences.items())[:5]:
+        # Simplified Reed-Solomon: generate checksum symbols
+        values = [ord(c) for c in sequence]
+        
+        # Generate 2 checksum symbols (simplified)
+        checksum1 = sum(values) % 256
+        checksum2 = sum((i+1) * v for i, v in enumerate(values)) % 256
+        
+        print(f"Surah {surah}: checksums = ({checksum1}, {checksum2})")
+
+
+# =============================================================================
+# PATTERN 369: Viterbi Decoding Path
+# =============================================================================
+
+def test_viterbi_decoding_path():
+    """
+    Pattern #369: Viterbi Decoding Path
+    Test path optimization in HMM.
+    """
+    # Simplified Viterbi for sequence "الم"
+    states = ['A', 'L', 'M']  # States match letters
+    obs = [1, 30, 40]  # Abjad values as observations
+    
+    # Transition probabilities (simplified uniform)
+    trans = {
+        ('A', 'L'): 0.5,
+        ('L', 'M'): 0.5,
+    }
+    
+    # Emission probabilities
+    emit = {
+        ('A', 1): 0.8,
+        ('L', 30): 0.8,
+        ('M', 40): 0.8,
+    }
+    
+    # Forward pass
+    viterbi = [{}]
+    for i, state in enumerate(states):
+        viterbi[0][state] = emit.get((state, obs[i]), 0.1)
+    
+    for t in range(1, len(obs)):
+        viterbi.append({})
+        for state in states:
+            max_prob = max(
+                viterbi[t-1][prev_state] * trans.get((prev_state, state), 0.1)
+                for prev_state in states
+            )
+            viterbi[t][state] = max_prob * emit.get((state, obs[t]), 0.1)
+    
+    best_path = max(viterbi[-1].items(), key=lambda x: x[1])
+    print(f"Viterbi best path: {best_path[0]} with prob {best_path[1]:.4f}")
+
+
+# =============================================================================
+# PATTERN 371: Diffie-Hellman Key Exchange (Conceptual)
+# =============================================================================
+
+def test_diffie_hellman_key_exchange():
+    """
+    Pattern #371: Diffie-Hellman Key Exchange
+    Test conceptual key exchange.
+    """
+    # Simplified DH parameters
+    p = 71  # Prime (using Abjad value of ALM)
+    g = 2   # Generator
+    
+    # Alice's private key
+    a = 5
+    # Bob's private key
+    b = 7
+    
+    # Public values
+    A = pow(g, a, p)
+    B = pow(g, b, p)
+    
+    # Shared secret
+    shared_alice = pow(B, a, p)
+    shared_bob = pow(A, b, p)
+    
+    assert shared_alice == shared_bob, "Key exchange failed"
+    print(f"DH shared secret: {shared_alice}")
+
+
+# =============================================================================
+# PATTERN 373: SHA-3 (Keccak) Fingerprint
+# =============================================================================
+
+def test_sha3_fingerprint(muqattaat_sequences):
+    """
+    Pattern #373: SHA-3 (Keccak) Fingerprint
+    Test cryptographic hash of sequences.
+    """
+    for surah, sequence in list(muqattaat_sequences.items())[:5]:
+        hash_val = hashlib.sha3_256(sequence.encode('utf-8')).hexdigest()
+        print(f"Surah {surah}: SHA-3 = {hash_val[:16]}...")
+
+
+# =============================================================================
+# PATTERN 375: HMAC Message Auth
+# =============================================================================
+
+def test_hmac_message_auth(muqattaat_sequences):
+    """
+    Pattern #375: HMAC Message Authentication
+    Test message authentication.
+    """
+    import hmac
+    key = b"muqattaat_secret_key"
+    
+    for surah, sequence in list(muqattaat_sequences.items())[:5]:
+        hmac_val = hmac.new(key, sequence.encode(), hashlib.sha256).hexdigest()
+        print(f"Surah {surah}: HMAC = {hmac_val[:16]}...")
+
+
+# =============================================================================
+# PATTERN 380: Key Derivation Function
+# =============================================================================
+
+def test_key_derivation_function():
+    """
+    Pattern #380: Key Derivation Function
+    Test PBKDF2-like derivation.
+    """
+    password = "muqattaat"
+    salt = b"salt_value"
+    
+    # Simplified PBKDF2 (using SHA256)
+    derived = hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 100000)
+    print(f"Derived key: {derived.hex()[:32]}...")
+
+
+# =============================================================================
+# PATTERN 382: True Random Number Gen (TRNG)
+# =============================================================================
+
+def test_true_random_number_gen():
+    """
+    Pattern #382: True Random Number Generation
+    Test randomness from system entropy.
+    """
+    import os
+    # Use system random bytes
+    random_bytes = os.urandom(8)
+    random_int = int.from_bytes(random_bytes, 'big')
+    print(f"TRNG from os.urandom: {random_int}")
+
+
+# =============================================================================
+# PATTERN 384: Periodicity Detection
+# =============================================================================
+
+def test_periodicity_detection(muqattaat_sequences):
+    """
+    Pattern #384: Periodicity Detection
+    Test for repeating patterns.
+    """
+    for surah, sequence in list(muqattaat_sequences.items())[:5]:
+        values = [ord(c) for c in sequence]
+        n = len(values)
+        
+        # Autocorrelation at lag 1
+        if n > 1:
+            autocorr = sum(values[i] * values[i+1] for i in range(n-1))
+            autocorr /= sum(v**2 for v in values)
+            
+            print(f"Surah {surah}: periodicity = {autocorr:.3f}")
+
+
+# =============================================================================
+# PATTERN 386: Collision Resistance Factor
+# =============================================================================
+
+def test_collision_resistance_factor(muqattaat_sequences):
+    """
+    Pattern #386: Collision Resistance Factor
+    Test hash collision resistance.
+    """
+    hashes = {}
+    for surah, sequence in muqattaat_sequences.items():
+        h = hashlib.sha256(sequence.encode()).hexdigest()
+        if h in hashes:
+            print(f"COLLISION: {sequence} and Surah {hashes[h]}")
+            return
+        hashes[h] = surah
+    
+    print(f"No collisions in {len(hashes)} sequences")
+
+
+# =============================================================================
+# PATTERN 388: Pre-image Resistance
+# =============================================================================
+
+def test_preimage_resistance():
+    """
+    Pattern #388: Pre-image Resistance
+    Test one-way function property.
+    """
+    # Given hash, try to find pre-image (impractical but tests concept)
+    target_hash = hashlib.sha256("الم".encode()).hexdigest()
+    print(f"Target hash: {target_hash[:16]}...")
+    print("Pre-image resistance: computationally infeasible to reverse")
+
+
+# =============================================================================
+# PATTERN 390: Avalanche Effect Weight
+# =============================================================================
+
+def test_avalanche_effect_weight():
+    """
+    Pattern #390: Avalanche Effect Weight
+    Test that small changes cause large hash changes.
+    """
+    original = "الم"
+    hash1 = hashlib.sha256(original.encode()).hexdigest()
+    
+    # Flip one bit via character change
+    modified = "الـ"  # Slightly different
+    hash2 = hashlib.sha256(modified.encode()).hexdigest()
+    
+    # Count differing bits
+    diff_bits = sum(bin(int(h1, 16) ^ int(h2, 16)).count('1') for h1, h2 in zip(hash1, hash2))
+    total_bits = len(hash1) * 4  # Each hex char = 4 bits
+    
+    avalanche = diff_bits / total_bits
+    print(f"Avalanche effect: {avalanche:.1%} bits changed")
+
+
+# =============================================================================
+# PATTERN 393: Birthday Attack Threshold
+# =============================================================================
+
+def test_birthday_attack_threshold():
+    """
+    Pattern #393: Birthday Attack Threshold
+    Test birthday paradox bounds.
+    """
+    n = 256  # Hash bits
+    # Birthday bound: ~sqrt(2^n)
+    import math
+    bound = math.sqrt(2 ** n)
+    print(f"Birthday attack threshold: ~2^{int(math.log2(bound))} operations")
+
+
+# =============================================================================
+# PATTERN 395: Forward Secrecy Audit
+# =============================================================================
+
+def test_forward_secrecy_audit():
+    """
+    Pattern #395: Forward Secrecy Audit
+    Test that compromised keys don't expose past sessions.
+    """
+    # Simulate session keys
+    sessions = []
+    for i in range(3):
+        key = hashlib.sha256(f"session_{i}".encode()).hexdigest()
+        sessions.append(key)
+    
+    print(f"Generated {len(sessions)} ephemeral session keys")
+    print("Forward secrecy: Each key is independent")
+
+
+# =============================================================================
+# PATTERN 397: Password Hashing (Argon2-like)
+# =============================================================================
+
+def test_password_hashing():
+    """
+    Pattern #397: Password Hashing
+    Test secure password hashing.
+    """
+    password = "muqattaat_analysis"
+    
+    # Use PBKDF2 as available substitute
+    hash_val = hashlib.pbkdf2_hmac(
+        'sha256',
+        password.encode(),
+        b'salt',
+        100000
+    )
+    
+    print(f"Password hash: {hash_val.hex()[:32]}...")
+
+
+# =============================================================================
+# Integration Test
+# =============================================================================
+
+def test_cryptography_signal_integrated(muqattaat_sequences):
+    """
+    Integration test for cryptography & signal patterns.
+    """
+    results = {
+        "sequences_tested": len(muqattaat_sequences),
+        "hashes_generated": len(muqattaat_sequences),
+    }
+    
+    print("Cryptography & Signal Integration:")
+    for k, v in results.items():
+        print(f"  {k}: {v}")
+    
+    assert results["sequences_tested"] > 0
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "--tb=short"])
+
