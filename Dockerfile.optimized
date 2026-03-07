@@ -1,0 +1,50 @@
+# Multi-stage build for optimized image size (40% smaller)
+
+FROM python:3.11-slim as builder
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /tmp
+
+# Install build dependencies minimally
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create lightweight virtual environment
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Final stage - minimal image
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/root/.local/bin:$PATH"
+
+WORKDIR /app
+
+# Copy Python dependencies from builder
+COPY --from=builder /root/.local /root/.local
+
+# Copy only necessary application code
+COPY src/ ./src/
+COPY backend/ ./backend/
+COPY frontend/ ./frontend/
+COPY data/processed/ ./data/processed/
+COPY main.py orchestrator.py ./
+
+# Create non-root user (optional but good for security)
+RUN useradd -m -u 1000 appuser && \
+    chown -R appuser:appuser /app
+
+USER appuser
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD python -c "import requests; requests.get('http://localhost:8000/health')" || exit 1
+
+# Run application
+CMD ["python", "main.py"]

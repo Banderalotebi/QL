@@ -9,6 +9,10 @@ import logging
 from datetime import datetime
 from pathlib import Path
 import os
+import sys
+
+# Add parent directory to path so we can import src module
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # network access for API-based operation
 import requests
@@ -369,7 +373,7 @@ with st.sidebar:
     # System Info
     st.subheader("ℹ️ System Info")
     st.write(f"**Timestamp:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    st.write(f"**CrewAI:** {'✓' if hive_status.get('crewai_enabled') else '✗'}")
+    st.write(f"**Ollama 3.1:** {'✓' if hive_status.get('ollama_enabled') else '✗'}")
     st.write(f"**Database:** {'✓' if hive_status.get('database_connected') else '✗'}")
     st.write(f"**Meritocracy:** ✓")
 
@@ -616,10 +620,10 @@ with tab_dashboard:
         st.subheader("📈 System Metrics")
         
         hive_metrics = hive.get_hive_status()
-        st.metric("Thoughts Logged", hive_metrics['total_thoughts_logged'])
-        st.metric("Supervisions", hive_metrics['total_supervisions'])
-        st.metric("CrewAI Enabled", "✓" if hive_metrics['crewai_enabled'] else "✗")
-        st.metric("Database Connected", "✓" if hive_metrics['database_connected'] else "✗")
+        st.metric("Thoughts Logged", hive_metrics.get('total_thoughts_logged', 0))
+        st.metric("Supervisions", hive_metrics.get('total_supervisions', 0))
+        st.metric("Ollama 3.1 Enabled", "✓" if hive_metrics.get('ollama_enabled') else "✗")
+        st.metric("Database Connected", "✓" if hive_metrics.get('database_connected') else "✗")
 
 
 # ──────────────────────────────────────────────────────────────────

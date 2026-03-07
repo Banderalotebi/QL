@@ -10,14 +10,23 @@ from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, asdict
 from enum import Enum
 
-# Try to import CrewAI, fallback gracefully if not available
+# Ollama 3.1 direct integration (no CrewAI dependency)
+import requests
+
+OLLAMA_AVAILABLE = False
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.1")
+
 try:
-    from crewai import Agent, Task, Crew, Process
-    from langchain_ollama import ChatOllama
-    CREWAI_AVAILABLE = True
-except ImportError:
-    CREWAI_AVAILABLE = False
-    print("⚠️  CrewAI not available - using fallback mathematical orchestration")
+    # Test Ollama connectivity at startup
+    response = requests.get(f"{OLLAMA_BASE_URL}/api/tags", timeout=2)
+    if response.status_code == 200:
+        OLLAMA_AVAILABLE = True
+        print(f"✅ Ollama 3.1 connected at {OLLAMA_BASE_URL}")
+    else:
+        print(f"⚠️  Ollama not responding (status {response.status_code})")
+except Exception as e:
+    print(f"⚠️  Ollama not available - using fallback mathematical orchestration ({e})")
 
 from src.agents.mathematical_auditor import get_math_auditor
 from src.core.state import Hypothesis
@@ -64,7 +73,7 @@ class HiveCouncil:
 
     def __init__(self, use_ollama: bool = False):
         """Initialize the Hive Council"""
-        self.use_ollama = use_ollama and CREWAI_AVAILABLE
+        self.use_ollama = use_ollama and OLLAMA_AVAILABLE
         self.math_auditor = get_math_auditor()
         self.db = NeonDB()
         self.meritocracy_db = get_meritocracy_db()
@@ -74,10 +83,13 @@ class HiveCouncil:
         self.shared_memory_path.parent.mkdir(parents=True, exist_ok=True)
         self._load_shared_memory()
         self._initialize_agent_registry()
+        self.ollama_initialized = False
+        self.ollama_base_url = OLLAMA_BASE_URL
+        self.ollama_model = OLLAMA_MODEL
 
-        # Initialize CrewAI if available
+        # Initialize Ollama if available
         if self.use_ollama:
-            self._init_crewai_hive()
+            self._init_ollama_hive()
         else:
             self._init_mathematical_hive()
 
@@ -161,56 +173,62 @@ class HiveCouncil:
         self._save_shared_memory()
 
 
-    def _init_crewai_hive(self):
-        """Initialize CrewAI-based expert hive with Ollama"""
+    def _init_ollama_hive(self):
+        """Initialize Ollama 3.1 model and configure agent roles"""
         try:
-            llm = ChatOllama(model="llama3.1", base_url="http://localhost:11434")
-
-            # ALPHA SQUAD: Cryptographic Engineers
-            self.crypt_worker = Agent(
-                role=AgentRole.CRYPT_WORKER.value,
-                goal="Write precise Python scripts for Abjad and Rasm analysis",
-                backstory="High-speed developer specializing in Arabic string manipulation",
-                llm=llm,
-                verbose=True
+            # Test connection with a simple prompt
+            test_response = requests.post(
+                f"{OLLAMA_BASE_URL}/api/generate",
+                json={
+                    "model": OLLAMA_MODEL,
+                    "prompt": "Hello",
+                    "stream": False,
+                    "keep_alive": "5m"
+                },
+                timeout=10
             )
-
-            self.senior_architect = Agent(
-                role=AgentRole.SENIOR_ARCHITECT.value,
-                goal="Ensure code is bug-free and mathematically sound",
-                backstory="Veteran systems architect who has seen every runtime error",
-                llm=llm,
-                verbose=True,
-                allow_delegation=True
-            )
-
-            # BETA SQUAD: Linguistic Sentinels
-            self.linguistic_worker = Agent(
-                role=AgentRole.LINGUISTIC_WORKER.value,
-                goal="Analyze phonetic density and Tajweed-based frequency",
-                backstory="Expert in Arabic NLP and classical morphological structures",
-                llm=llm,
-                verbose=True
-            )
-
-            self.philologist = Agent(
-                role=AgentRole.PHILOLOGIST.value,
-                goal="Ensure root-pattern consistency and classical Arabic integrity",
-                backstory="Historical linguist with deep knowledge of root morphology",
-                llm=llm,
-                verbose=True,
-                allow_delegation=True
-            )
-
-            self.crewai_initialized = True
+            if test_response.status_code == 200:
+                self.ollama_initialized = True
+                self.ollama_base_url = OLLAMA_BASE_URL
+                self.ollama_model = OLLAMA_MODEL
+                print(f"✅ Ollama 3.1 ({OLLAMA_MODEL}) initialized successfully")
+            else:
+                raise Exception(f"Ollama returned status {test_response.status_code}")
         except Exception as e:
-            print(f"⚠️  CrewAI initialization failed: {e} - falling back to mathematical hive")
-            self.crewai_initialized = False
+            print(f"⚠️  Ollama initialization failed: {e} - falling back to mathematical hive")
+            self.ollama_initialized = False
             self._init_mathematical_hive()
+
+    def _call_ollama(self, prompt: str, system_role: str = "", temperature: float = 0.7) -> str:
+        """Call Ollama 3.1 API with a prompt and optional system role"""
+        if not self.ollama_initialized:
+            return "❌ Ollama not initialized"
+        
+        full_prompt = f"{system_role}\n\n{prompt}" if system_role else prompt
+        
+        try:
+            response = requests.post(
+                f"{self.ollama_base_url}/api/generate",
+                json={
+                    "model": self.ollama_model,
+                    "prompt": full_prompt,
+                    "stream": False,
+                    "temperature": temperature,
+                    "keep_alive": "5m"
+                },
+                timeout=30
+            )
+            response.raise_for_status()
+            result = response.json()
+            return result.get("response", "").strip()
+        except requests.exceptions.Timeout:
+            return "⏱️ Ollama request timed out"
+        except Exception as e:
+            return f"❌ Ollama error: {str(e)}"
 
     def _init_mathematical_hive(self):
         """Initialize mathematical hive (no external dependencies)"""
-        self.crewai_initialized = False
+        self.ollama_initialized = False
         self.math_auditor = get_math_auditor()
 
     def log_thought(self, agent_role: str, thought: str, confidence: float, 
@@ -323,23 +341,30 @@ class HiveCouncil:
         
         # ALPHA SQUAD: Cryptographic Analysis
         try:
-            if self.crewai_initialized:
-                # Use CrewAI if available
-                crypt_task = Task(
-                    description=f"Analyze Surah {surah_num} ({muqattaat_sequence}). "
-                                f"Verify if letters follow Abjad numerological patterns.",
-                    expected_output="Verified Python report with Abjad checksums"
+            if self.ollama_initialized:
+                # Use Ollama 3.1 for cryptographic analysis
+                crypt_prompt = f"""You are a Cryptographic Engineer analyzing Quranic Muqattaat patterns.
+Analyze Surah {surah_num} with the sequence: {muqattaat_sequence}
+
+Tasks:
+1. Verify if letters follow Abjad numerological patterns
+2. Check for mathematical relationships (Modulo-19, Golden Ratio)
+3. Provide a Python-ready analysis report
+
+Format your response as a structured analysis with:
+- Abjad checksums for each letter
+- Mathematical pattern verification
+- Brief Python pseudocode for validation"""
+                
+                crypt_result = self._call_ollama(
+                    crypt_prompt,
+                    system_role="You are an expert in Arabic cryptanalysis and Quranic mathematics.",
+                    temperature=0.7
                 )
-                crypt_crew = Crew(
-                    agents=[self.crypt_worker, self.senior_architect],
-                    tasks=[crypt_task],
-                    process=Process.hierarchical,
-                    verbose=True
-                )
-                crypt_result = crypt_crew.kickoff()
                 results["worker_proposals"].append({
-                    "squad": "Alpha (Cryptographic)",
-                    "result": str(crypt_result)
+                    "squad": "Alpha (Ollama-Cryptographic)",
+                    "model": self.ollama_model,
+                    "result": crypt_result
                 })
             else:
                 # Use mathematical fallback
@@ -356,11 +381,35 @@ class HiveCouncil:
         
         # BETA SQUAD: Linguistic Analysis
         try:
-            results["linguistic_analysis"] = {
-                "phonetic_density": self._calculate_phonetic_density(muqattaat_sequence),
-                "tajweed_parameters": self._extract_tajweed_rules(muqattaat_sequence),
-                "root_patterns": self._identify_root_patterns(muqattaat_sequence)
-            }
+            if self.ollama_initialized:
+                # Use Ollama for linguistic analysis
+                linguistic_prompt = f"""You are a Linguistic Expert analyzing Arabic Muqattaat.
+Surah {surah_num}: {muqattaat_sequence}
+
+Provide analysis on:
+1. Phonetic density and letter frequency
+2. Tajweed (Quranic recitation) rules applicable
+3. Arabic root patterns and morphological insights
+4. Historical and classical linguistic significance"""
+                
+                linguistic_result = self._call_ollama(
+                    linguistic_prompt,
+                    system_role="You are an expert in Arabic linguistics and classical morphology.",
+                    temperature=0.6
+                )
+                results["linguistic_analysis"] = {
+                    "ollama_analysis": linguistic_result,
+                    "phonetic_density": self._calculate_phonetic_density(muqattaat_sequence),
+                    "tajweed_parameters": self._extract_tajweed_rules(muqattaat_sequence),
+                    "root_patterns": self._identify_root_patterns(muqattaat_sequence)
+                }
+            else:
+                # Mathematical fallback
+                results["linguistic_analysis"] = {
+                    "phonetic_density": self._calculate_phonetic_density(muqattaat_sequence),
+                    "tajweed_parameters": self._extract_tajweed_rules(muqattaat_sequence),
+                    "root_patterns": self._identify_root_patterns(muqattaat_sequence)
+                }
         except Exception as e:
             results["linguistic_analysis"]["error"] = str(e)
         
@@ -455,7 +504,8 @@ class HiveCouncil:
     def get_hive_status(self) -> Dict[str, Any]:
         """Get current status of the hive"""
         return {
-            "crewai_enabled": self.crewai_initialized,
+            "ollama_enabled": self.ollama_initialized,
+            "ollama_model": self.ollama_model if self.ollama_initialized else None,
             "mathematical_audit_enabled": True,
             "total_thoughts_logged": len(self.thoughts_log),
             "total_supervisions": len(self.supervision_reports),

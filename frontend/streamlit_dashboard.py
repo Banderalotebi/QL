@@ -113,8 +113,8 @@ def render_header():
         if status:
             col_a, col_b = st.columns(2)
             with col_a:
-                if status.get("crewai_enabled"):
-                    st.metric("CrewAI", "✅ Enabled", delta="Ready")
+                if status.get("ollama_enabled"):
+                    st.metric("Ollama 3.1", "✅ Enabled", delta="Ready")
                 else:
                     st.metric("Mathematical", "✅ Active", delta="Fallback")
             with col_b:
@@ -386,7 +386,7 @@ def render_control_panel():
         # Mode selector
         mode = st.radio(
             "Execution Mode",
-            ["Mathematical (Fast)", "CrewAI (if available)", "Hybrid"]
+            ["Mathematical (Fast)", "Ollama 3.1 (LLM-Enhanced)", "Hybrid"]
         )
         
         # Execute button

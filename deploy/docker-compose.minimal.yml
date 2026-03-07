@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # Single API container - runs everything lean
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+      - "8501:8501"  # Streamlit on same container optional
+    environment:
+      - PYTHONUNBUFFERED=1
+      - APP_ENV=production
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      # Use Neo4j Atlas (cloud, not local)
+      - NEO4J_URI=${NEO4J_URI:-neo4j+s://xxxx.databases.neo4j.io}
+      - NEO4J_USER=${NEO4J_USER:-neo4j}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+    volumes:
+      - ./data/processed:/app/data/processed  # Only processed data, no raw
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Optional: Lightweight cache (Redis)
+  # Uncomment only if needed for session management
+  # cache:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"
+  #   restart: unless-stopped
+
+networks:
+  default:
+    name: ql-network

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "dockerfile",
+    "dockerfile": "./Dockerfile"
+  },
+  "deploy": {
+    "startCommand": "python orchestrator.py",
+    "restartPolicyCondition": "on-failure",
+    "restartPolicyMaxRetries": 10,
+    "numReplicas": 1,
+    "region": "europe-west4"
+  },
+  "env": {
+    "PYTHONUNBUFFERED": {
+      "description": "Force Python to write logs directly to stdout",
+      "value": "1"
+    },
+    "APP_ENV": {
+      "description": "Application environment",
+      "value": "production"
+    },
+    "LOG_LEVEL": {
+      "description": "Logging level",
+      "value": "INFO"
+    },
+    "API_HOST": {
+      "description": "API bind address",
+      "value": "0.0.0.0"
+    },
+    "API_PORT": {
+      "description": "API port",
+      "value": "8000"
+    },
+    "STREAMLIT_SERVER_PORT": {
+      "description": "Streamlit port",
+      "value": "8501"
+    },
+    "STREAMLIT_SERVER_HEADLESS": {
+      "description": "Headless mode",
+      "value": "true"
+    },
+    "STREAMLIT_SERVER_ENABLE_CORS": {
+      "description": "Enable CORS",
+      "value": "false"
+    },
+    "DEBUG": {
+      "description": "Debug mode",
+      "value": "false"
+    },
+    "HIVE_BATCH_SIZE": {
+      "description": "Patterns per batch",
+      "value": "3"
+    },
+    "HIVE_INTERVAL": {
+      "description": "Worker interval (seconds)",
+      "value": "300"
+    },
+    "HIVE_AUTO_RESTART": {
+      "description": "Auto-restart on failure",
+      "value": "true"
+    },
+    "OLLAMA_MODEL": {
+      "description": "Ollama model",
+      "value": "llama3.1"
+    },
+    "NEO4J_URI": {
+      "description": "Neo4j connection",
+      "value": "bolt://localhost:7687"
+    },
+    "NEO4J_USER": {
+      "description": "Neo4j user",
+      "value": "neo4j"
+    }
+  },
+  "envSecrets": [
+    "ANTHROPIC_API_KEY",
+    "NEO4J_PASSWORD",
+    "DATABASE_URL",
+    "OLLAMA_BASE_URL"
+  ],
+  "ports": [
+    {
+      "name": "API",
+      "port": 8000,
+      "protocol": "http"
+    },
+    {
+      "name": "Dashboard",
+      "port": 8501,
+      "protocol": "http"
+    }
+  ],
+  "healthCheck": {
+    "httpPath": "/system/health",
+    "httpPort": 8000,
+    "initialDelay": 60,
+    "interval": 30,
+    "timeout": 10,
+    "maxRetries": 3
+  }
+}

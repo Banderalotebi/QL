@@ -1,0 +1,43 @@
+# Production Requirements - Dev dependencies removed
+# Significantly smaller Docker image + faster installations
+# 
+# Install with: pip install -r requirements-prod.txt
+
+# AI/ML Core (REQUIRED)
+langgraph>=0.1.0,<1.0.0
+langchain-core>=0.1.0,<1.0.0
+anthropic>=0.25.0,<1.0.0
+
+# Arabic Language Processing (REQUIRED)
+pyarabic>=0.6.15
+arabic-reshaper>=3.0.0
+python-bidi>=0.4.2
+
+# Data Processing (REQUIRED)
+networkx>=3.0,<4.0
+pandas>=2.0.0,<3.0.0
+numpy>=1.24.0,<2.0.0
+scipy>=1.11.0,<2.0.0
+
+# UI & Visualization (REQUIRED for dashboard)
+rich>=13.0.0,<14.0.0
+streamlit>=1.28.0,<2.0.0
+pyvis>=0.3.1
+
+# Backend & API (REQUIRED)
+fastapi>=0.104.0,<1.0.0
+uvicorn>=0.24.0,<1.0.0
+requests>=2.31.0,<3.0.0
+aiohttp>=3.9.0,<4.0.0
+httpx>=0.24.0
+
+# Database (REQUIRED)
+neo4j>=5.0.0,<6.0.0
+
+# REMOVED: Testing & Code Quality (not needed in production)
+# pytest, pytest-cov, pytest-asyncio, pytest-xdist, flake8, black, mypy
+# bandit, safety, coverage
+
+# Optional: Add only if needed
+# pydantic>=2.0.0  # For strict validation
+# python-dotenv>=1.0.0  # For environment variables

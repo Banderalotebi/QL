@@ -213,12 +213,15 @@ class ExecutionQueueWidget:
         
         col1, col2, col3 = st.columns(3)
         
+        max_batch = len(patterns) if patterns else 1
+        default_batch = min(5, max_batch)  # Ensure default doesn't exceed max
+        
         with col1:
             batch_size = st.number_input(
                 "Batch Size",
                 min_value=1,
-                max_value=len(patterns) if patterns else 1,
-                value=5,
+                max_value=max_batch,
+                value=default_batch,
                 key="batch_size"
             )
         

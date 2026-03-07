@@ -31,7 +31,7 @@ class ScanRequest(BaseModel):
     scan_type: str = "single"  # "single", "range", "all_muqattaat"
     start_surah: Optional[int] = None
     end_surah: Optional[int] = None
-    execution_mode: str = "mathematical"  # "mathematical", "crewai", "hybrid"
+    execution_mode: str = "mathematical"  # "mathematical", "ollama", "hybrid"
 
 
 class HypothesisRequest(BaseModel):
@@ -222,7 +222,7 @@ async def start_scan(request: ScanRequest, background_tasks: BackgroundTasks):
     scan_id = f"SCAN_{datetime.now().timestamp()}"
     
     # Validate execution mode
-    if request.execution_mode not in ["mathematical", "crewai", "hybrid"]:
+    if request.execution_mode not in ["mathematical", "ollama", "hybrid"]:
         raise HTTPException(status_code=400, detail="Invalid execution_mode")
     
     # Schedule background scan
@@ -393,7 +393,7 @@ async def get_hive_info():
         "total_thoughts": len(hive.thoughts_log),
         "total_supervisions": len(hive.supervision_reports),
         "shared_memory": hive.shared_memory,
-        "crewai_available": hive.crewai_initialized,
+        "ollama_available": hive.ollama_initialized,
         "database_connected": hive.db.is_connected
     }
 

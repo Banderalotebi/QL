@@ -57,7 +57,7 @@ class ResearchRunRequest(BaseModel):
     surah_numbers: List[int]
     focus: str = "muqattaat"
     run_name: Optional[str] = None
-    execution_mode: str = "mathematical"  # "mathematical", "crewai", "hybrid"
+    execution_mode: str = "mathematical"  # "mathematical", "ollama", "hybrid"
 
 
 class ScanRequest(BaseModel):
