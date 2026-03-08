@@ -10,6 +10,11 @@ import json
 from pathlib import Path
 from datetime import datetime, timedelta
 import time
+import sys
+import os
+
+# Add parent directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Set page config
 st.set_page_config(
@@ -53,8 +58,24 @@ st.markdown("""
         margin: 8px 0;
         border-radius: 4px;
     }
+    .status-card {
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #161b22;
+        border-left: 4px solid #3fb950;
+        margin-bottom: 10px;
+    }
 </style>
 """, unsafe_allow_html=True)
+
+
+# Try to import psutil for process monitoring
+try:
+    import psutil
+    PSUTIL_AVAILABLE = True
+except ImportError:
+    PSUTIL_AVAILABLE = False
+    st.warning("psutil not installed - some monitoring features unavailable")
 
 
 @st.cache_resource
@@ -412,6 +433,162 @@ def render_control_panel():
         st.write(f"**Thoughts Logged:** {status.get('total_thoughts_logged', 0)}")
         st.write(f"**Supervisions:** {status.get('total_supervisions', 0)}")
         st.write(f"**Memory Size:** {status.get('shared_memory_size', 0)} bytes")
+        
+        st.divider()
+        
+        # Server Status Section
+        st.subheader("🖥️ Server Status")
+        
+        # Check services
+        import requests
+        
+        # API Status
+        try:
+            api_resp = requests.get("http://localhost:8000/system/health", timeout=2)
+            api_status = "🟢 Running" if api_resp.status_code == 200 else "🔴 Error"
+        except:
+            api_status = "🔴 Stopped"
+        
+        st.write(f"**API Server:** {api_status}")
+        
+        # Check for Hive process
+        hive_pid_file = Path("/workspaces/QL/.hive_pid")
+        if hive_pid_file.exists():
+            try:
+                hive_pid = int(hive_pid_file.read_text().strip())
+                if PSUTIL_AVAILABLE:
+                    try:
+                        proc = psutil.Process(hive_pid)
+                        cpu = proc.cpu_percent(interval=0.1)
+                        mem = proc.memory_info().rss / 1024 / 1024
+                        st.write(f"**Hive Process:** 🟢 Running (PID: {hive_pid})")
+                        st.write(f"   CPU: {cpu:.1f}% | Memory: {mem:.1f} MB")
+                    except:
+                        st.write(f"**Hive Process:** 🔴 Stopped (stale PID)")
+                else:
+                    st.write(f"**Hive Process:** 🟢 Running (PID: {hive_pid})")
+            except:
+                st.write(f"**Hive Process:** 🔴 Stopped")
+        else:
+            st.write(f"**Hive Process:** 🔴 Stopped")
+
+
+def render_server_status():
+    """Render server status tab"""
+    st.subheader("🖥️ Server Status")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # API Server Status
+        st.markdown("### 🌐 API Server (Port 8000)")
+        try:
+            import requests
+            api_resp = requests.get("http://localhost:8000/system/health", timeout=2)
+            if api_resp.status_code == 200:
+                st.success("🟢 API Server Running")
+                data = api_resp.json()
+                st.json(data)
+            else:
+                st.error(f"🔴 API Server Error (Status: {api_resp.status_code})")
+        except requests.exceptions.ConnectionError:
+            st.error("🔴 API Server Stopped")
+        except Exception as e:
+            st.warning(f"🟡 API Status Unknown: {e}")
+    
+    with col2:
+        # Hive Process Status
+        st.markdown("### 🏛️ Continuous Hive")
+        hive_pid_file = Path("/workspaces/QL/.hive_pid")
+        
+        if hive_pid_file.exists():
+            try:
+                hive_pid = int(hive_pid_file.read_text().strip())
+                if PSUTIL_AVAILABLE:
+                    try:
+                        proc = psutil.Process(hive_pid)
+                        st.success(f"🟢 Hive Running (PID: {hive_pid})")
+                        
+                        col_a, col_b = st.columns(2)
+                        with col_a:
+                            st.metric("CPU", f"{proc.cpu_percent(interval=0.1):.1f}%")
+                        with col_b:
+                            st.metric("Memory", f"{proc.memory_info().rss / 1024 / 1024:.1f} MB")
+                        
+                        st.metric("Threads", proc.num_threads())
+                        st.metric("Status", proc.status())
+                    except psutil.NoSuchProcess:
+                        st.error("🔴 Hive Process Not Found (stale PID)")
+                else:
+                    st.success(f"🟢 Hive Running (PID: {hive_pid})")
+                    st.info("Install psutil for detailed metrics")
+            except:
+                st.error("🔴 Invalid PID file")
+        else:
+            st.error("🔴 Hive Not Running")
+            st.info("Run './start_hive.sh' to start the Hive")
+    
+    st.divider()
+    
+    # Service Control
+    st.subheader("🎮 Service Control")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        if st.button("🚀 Start Hive", use_container_width=True):
+            import subprocess
+            subprocess.Popen(
+                ["bash", "/workspaces/QL/start_hive.sh"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
+            st.success("Hive starting...")
+            time.sleep(2)
+            st.rerun()
+    
+    with col2:
+        if st.button("⏹️ Stop Hive", use_container_width=True):
+            if PSUTIL_AVAILABLE and hive_pid_file.exists():
+                try:
+                    hive_pid = int(hive_pid_file.read_text().strip())
+                    import os
+                    os.kill(hive_pid, 9)
+                    st.success("Hive stopped!")
+                    time.sleep(1)
+                    st.rerun()
+                except:
+                    st.error("Could not stop Hive")
+            else:
+                st.warning("Cannot stop - Hive not running")
+    
+    with col3:
+        if st.button("💾 Save State", use_container_width=True):
+            try:
+                requests.post("http://localhost:8000/hive/save", timeout=5)
+                st.success("State saved!")
+            except:
+                st.error("API not available")
+    
+    st.divider()
+    
+    # Log Viewer
+    st.subheader("📋 Recent Logs")
+    
+    log_dir = Path("/workspaces/QL/logs")
+    if log_dir.exists():
+        log_files = list(log_dir.glob("hive_*.log"))
+        if log_files:
+            latest_log = max(log_files, key=lambda p: p.stat().st_mtime)
+            with open(latest_log, 'r') as f:
+                lines = f.readlines()
+                log_content = "".join(lines[-100:])
+            st.text_area("Log Output", log_content, height=300, disabled=True)
+            st.caption(f"File: {latest_log.name}")
+        else:
+            st.info("No log files found")
+    else:
+        st.info("Log directory not found")
 
 
 def main():
@@ -419,11 +596,12 @@ def main():
     render_header()
     
     # Create tabs for different views
-    tab1, tab2, tab3, tab4 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
         "🧠 Agent Thoughts",
         "📋 Supervision Reports",
         "📊 Analysis & Metrics",
-        "💾 Memory & Control"
+        "💾 Memory & Control",
+        "🖥️ Server Status"
     ])
     
     with tab1:
@@ -453,6 +631,9 @@ def main():
             if st.button("🔄 Reset Dashboard", use_container_width=True):
                 st.cache_resource.clear()
                 st.success("Dashboard reset!")
+    
+    with tab5:
+        render_server_status()
     
     # Control panel in sidebar
     render_control_panel()

@@ -8,6 +8,18 @@ from operator import add
 
 @dataclass
 class Hypothesis:
+    """Represents a hypothesis or finding from an agent scout.
+    
+    Attributes:
+        source_scout: Name of the scout that generated this hypothesis
+        goal_link: Explanation of how this relates to Muqattaat patterns
+        transformation_steps: Number of transformations applied
+        evidence_snippets: List of evidence supporting this hypothesis
+        description: Human-readable description of the finding
+        score: Occam score for ranking (lower is better)
+        surah_refs: List of Surah numbers this hypothesis relates to
+        metadata: Additional metadata dictionary for extensibility
+    """
     source_scout: str
     goal_link: str
     transformation_steps: int
@@ -15,6 +27,7 @@ class Hypothesis:
     description: str = ""
     score: float = 0.0
     surah_refs: List[int] = field(default_factory=list)
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
 @dataclass
 class RejectedHypothesis:

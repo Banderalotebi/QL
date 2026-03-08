@@ -1286,3 +1286,658 @@
 2026-03-06 14:59:02,553 - INFO -    Error count: 2
 2026-03-06 14:59:02,575 - INFO - 💾 Periodic state save completed
 2026-03-06 14:59:02,575 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 20:02:15,634 - INFO - Meritocracy schema initialized
+2026-03-07 20:02:15,715 - INFO - Meritocracy DB initialized at /workspaces/QL/data/processed/meritocracy.db
+2026-03-07 20:02:15,717 - INFO - Registered agent: Crypt-Worker with role: Cryptographic Engineer
+2026-03-07 20:02:15,717 - INFO - Registered agent: Senior Architect with role: Senior Architect & Reviewer
+2026-03-07 20:02:15,717 - INFO - Registered agent: Linguistic-Worker with role: Linguistic Analyst
+2026-03-07 20:02:15,717 - INFO - Registered agent: Philologist with role: Philological Expert
+2026-03-07 20:02:15,725 - INFO - 🏛️  Continuous Hive Runner initialized
+2026-03-07 20:02:15,725 - INFO -    Batch size: 3 surahs
+2026-03-07 20:02:15,725 - INFO -    Loop interval: 300 seconds
+2026-03-07 20:02:15,725 - INFO - 🏛️  Starting continuous hive operation
+2026-03-07 20:02:15,725 - INFO -    Total surahs available: 29
+2026-03-07 20:02:15,725 - INFO -    Batch size: 3
+2026-03-07 20:02:15,726 - INFO -    Batches per cycle: 9
+2026-03-07 20:02:15,726 - INFO - 
+================================================================================
+2026-03-07 20:02:15,726 - INFO - 🚀 Starting batch 1
+2026-03-07 20:02:15,726 - INFO -    Analyzing 3 surahs: [2, 3, 7]
+2026-03-07 20:02:15,726 - INFO - ================================================================================
+2026-03-07 20:02:15,760 - INFO - ✅ Batch 1 completed
+2026-03-07 20:02:15,761 - INFO -    Theories found: 2
+2026-03-07 20:02:15,761 - INFO -    Supervisions: 0
+2026-03-07 20:02:15,761 - INFO -    Error count: 0
+2026-03-07 20:02:15,761 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 20:15:48,115 - INFO - Meritocracy schema initialized
+2026-03-07 20:15:48,118 - INFO - Meritocracy DB initialized at /workspaces/QL/data/processed/meritocracy.db
+2026-03-07 20:15:48,128 - INFO - Registered agent: Crypt-Worker with role: Cryptographic Engineer
+2026-03-07 20:15:48,128 - INFO - Registered agent: Senior Architect with role: Senior Architect & Reviewer
+2026-03-07 20:15:48,128 - INFO - Registered agent: Linguistic-Worker with role: Linguistic Analyst
+2026-03-07 20:15:48,129 - INFO - Registered agent: Philologist with role: Philological Expert
+2026-03-07 20:15:48,147 - INFO - 🏛️  Continuous Hive Runner initialized
+2026-03-07 20:15:48,149 - INFO -    Batch size: 3 surahs
+2026-03-07 20:15:48,149 - INFO -    Loop interval: 300 seconds
+2026-03-07 20:15:48,149 - INFO - 🏛️  Starting continuous hive operation
+2026-03-07 20:15:48,149 - INFO -    Total surahs available: 29
+2026-03-07 20:15:48,150 - INFO -    Batch size: 3
+2026-03-07 20:15:48,150 - INFO -    Batches per cycle: 9
+2026-03-07 20:15:48,150 - INFO - 
+================================================================================
+2026-03-07 20:15:48,150 - INFO - 🚀 Starting batch 1
+2026-03-07 20:15:48,150 - INFO -    Analyzing 3 surahs: [2, 3, 7]
+2026-03-07 20:15:48,150 - INFO - ================================================================================
+2026-03-07 20:15:48,277 - INFO - ✅ Batch 1 completed
+2026-03-07 20:15:48,280 - INFO -    Theories found: 2
+2026-03-07 20:15:48,280 - INFO -    Supervisions: 0
+2026-03-07 20:15:48,281 - INFO -    Error count: 0
+2026-03-07 20:15:48,281 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 20:20:48,281 - INFO - 
+================================================================================
+2026-03-07 20:20:48,301 - INFO - 🚀 Starting batch 2
+2026-03-07 20:20:48,301 - INFO -    Analyzing 3 surahs: [10, 11, 12]
+2026-03-07 20:20:48,301 - INFO - ================================================================================
+2026-03-07 20:20:48,317 - INFO - ✅ Batch 2 completed
+2026-03-07 20:20:48,317 - INFO -    Theories found: 2
+2026-03-07 20:20:48,317 - INFO -    Supervisions: 0
+2026-03-07 20:20:48,317 - INFO -    Error count: 0
+2026-03-07 20:20:48,317 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 20:25:48,318 - INFO - 
+================================================================================
+2026-03-07 20:25:48,378 - INFO - 🚀 Starting batch 3
+2026-03-07 20:25:48,379 - INFO -    Analyzing 3 surahs: [13, 14, 15]
+2026-03-07 20:25:48,379 - INFO - ================================================================================
+2026-03-07 20:25:48,423 - INFO - ✅ Batch 3 completed
+2026-03-07 20:25:48,423 - INFO -    Theories found: 2
+2026-03-07 20:25:48,424 - INFO -    Supervisions: 0
+2026-03-07 20:25:48,424 - INFO -    Error count: 0
+2026-03-07 20:25:48,433 - INFO - 💾 Periodic state save completed
+2026-03-07 20:25:48,435 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 20:30:48,436 - INFO - 
+================================================================================
+2026-03-07 20:30:48,440 - INFO - 🚀 Starting batch 4
+2026-03-07 20:30:48,440 - INFO -    Analyzing 3 surahs: [19, 20, 26]
+2026-03-07 20:30:48,440 - INFO - ================================================================================
+2026-03-07 20:30:48,463 - INFO - ✅ Batch 4 completed
+2026-03-07 20:30:48,463 - INFO -    Theories found: 2
+2026-03-07 20:30:48,463 - INFO -    Supervisions: 0
+2026-03-07 20:30:48,463 - INFO -    Error count: 0
+2026-03-07 20:30:48,463 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 20:35:48,463 - INFO - 
+================================================================================
+2026-03-07 20:35:48,463 - INFO - 🚀 Starting batch 5
+2026-03-07 20:35:48,463 - INFO -    Analyzing 3 surahs: [27, 28, 29]
+2026-03-07 20:35:48,464 - INFO - ================================================================================
+2026-03-07 20:35:48,475 - INFO - ✅ Batch 5 completed
+2026-03-07 20:35:48,475 - INFO -    Theories found: 2
+2026-03-07 20:35:48,475 - INFO -    Supervisions: 0
+2026-03-07 20:35:48,475 - INFO -    Error count: 0
+2026-03-07 20:35:48,475 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 20:40:48,476 - INFO - 
+================================================================================
+2026-03-07 20:40:48,476 - INFO - 🚀 Starting batch 6
+2026-03-07 20:40:48,476 - INFO -    Analyzing 3 surahs: [30, 31, 32]
+2026-03-07 20:40:48,476 - INFO - ================================================================================
+2026-03-07 20:40:48,488 - INFO - ✅ Batch 6 completed
+2026-03-07 20:40:48,488 - INFO -    Theories found: 2
+2026-03-07 20:40:48,488 - INFO -    Supervisions: 0
+2026-03-07 20:40:48,488 - INFO -    Error count: 0
+2026-03-07 20:40:48,492 - INFO - 💾 Periodic state save completed
+2026-03-07 20:40:48,492 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 20:45:48,492 - INFO - 
+================================================================================
+2026-03-07 20:45:48,495 - INFO - 🚀 Starting batch 7
+2026-03-07 20:45:48,495 - INFO -    Analyzing 3 surahs: [36, 38, 40]
+2026-03-07 20:45:48,495 - INFO - ================================================================================
+2026-03-07 20:45:48,545 - INFO - ✅ Batch 7 completed
+2026-03-07 20:45:48,545 - INFO -    Theories found: 2
+2026-03-07 20:45:48,545 - INFO -    Supervisions: 0
+2026-03-07 20:45:48,545 - INFO -    Error count: 0
+2026-03-07 20:45:48,545 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 20:50:48,545 - INFO - 
+================================================================================
+2026-03-07 20:50:48,553 - INFO - 🚀 Starting batch 8
+2026-03-07 20:50:48,553 - INFO -    Analyzing 3 surahs: [41, 42, 43]
+2026-03-07 20:50:48,553 - INFO - ================================================================================
+2026-03-07 20:50:48,564 - INFO - ✅ Batch 8 completed
+2026-03-07 20:50:48,565 - INFO -    Theories found: 2
+2026-03-07 20:50:48,565 - INFO -    Supervisions: 0
+2026-03-07 20:50:48,565 - INFO -    Error count: 0
+2026-03-07 20:50:48,565 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 20:55:48,565 - INFO - 
+================================================================================
+2026-03-07 20:55:48,565 - INFO - 🚀 Starting batch 9
+2026-03-07 20:55:48,565 - INFO -    Analyzing 3 surahs: [44, 45, 46]
+2026-03-07 20:55:48,565 - INFO - ================================================================================
+2026-03-07 20:55:48,575 - INFO - ✅ Batch 9 completed
+2026-03-07 20:55:48,575 - INFO -    Theories found: 2
+2026-03-07 20:55:48,575 - INFO -    Supervisions: 0
+2026-03-07 20:55:48,575 - INFO -    Error count: 0
+2026-03-07 20:55:48,578 - INFO - 💾 Periodic state save completed
+2026-03-07 20:55:48,578 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 21:00:48,578 - INFO - 
+================================================================================
+2026-03-07 21:00:48,591 - INFO - 🚀 Starting batch 10
+2026-03-07 21:00:48,591 - INFO -    Analyzing 2 surahs: [50, 68]
+2026-03-07 21:00:48,591 - INFO - ================================================================================
+2026-03-07 21:00:48,603 - INFO - ✅ Batch 10 completed
+2026-03-07 21:00:48,603 - INFO -    Theories found: 2
+2026-03-07 21:00:48,603 - INFO -    Supervisions: 0
+2026-03-07 21:00:48,603 - INFO -    Error count: 0
+2026-03-07 21:00:48,603 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 21:04:19,314 - INFO - Using SQLite fallback (no pooling needed)
+2026-03-07 21:04:19,328 - INFO - NeonLabAPI connected to database
+2026-03-07 21:04:19,476 - INFO - Meritocracy schema initialized
+2026-03-07 21:04:19,476 - INFO - Meritocracy DB initialized at /workspaces/QL/data/processed/meritocracy.db
+2026-03-07 21:04:19,478 - INFO - Registered agent: Crypt-Worker with role: Cryptographic Engineer
+2026-03-07 21:04:19,478 - INFO - Registered agent: Senior Architect with role: Senior Architect & Reviewer
+2026-03-07 21:04:19,479 - INFO - Registered agent: Linguistic-Worker with role: Linguistic Analyst
+2026-03-07 21:04:19,480 - INFO - Registered agent: Philologist with role: Philological Expert
+2026-03-07 21:04:19,494 - INFO - 🏛️  Continuous Hive Runner initialized
+2026-03-07 21:04:19,494 - INFO -    Batch size: 3 surahs
+2026-03-07 21:04:19,494 - INFO -    Loop interval: 300 seconds
+2026-03-07 21:04:19,494 - INFO - 🏛️  Starting continuous hive operation
+2026-03-07 21:04:19,494 - INFO -    Total surahs available: 29
+2026-03-07 21:04:19,494 - INFO -    Batch size: 3
+2026-03-07 21:04:19,494 - INFO -    Batches per cycle: 9
+2026-03-07 21:04:19,495 - INFO - 
+================================================================================
+2026-03-07 21:04:19,495 - INFO - 🚀 Starting batch 1
+2026-03-07 21:04:19,495 - INFO -    Analyzing 3 surahs: [2, 3, 7]
+2026-03-07 21:04:19,495 - INFO - ================================================================================
+2026-03-07 21:04:19,558 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:04:19,558 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:04:19,558 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:04:19,558 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:04:19,558 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:04:19,558 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:04:19,566 - INFO - ✅ Batch 1 completed
+2026-03-07 21:04:19,566 - INFO -    Theories found: 2
+2026-03-07 21:04:19,566 - INFO -    Supervisions: 0
+2026-03-07 21:04:19,566 - INFO -    Error count: 0
+2026-03-07 21:04:19,566 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 21:09:19,567 - INFO - 
+================================================================================
+2026-03-07 21:09:19,588 - INFO - 🚀 Starting batch 2
+2026-03-07 21:09:19,591 - INFO -    Analyzing 3 surahs: [10, 11, 12]
+2026-03-07 21:09:19,591 - INFO - ================================================================================
+2026-03-07 21:09:19,621 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:09:19,621 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:09:19,621 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:09:19,622 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:09:19,622 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:09:19,622 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:09:19,704 - INFO - ✅ Batch 2 completed
+2026-03-07 21:09:19,705 - INFO -    Theories found: 2
+2026-03-07 21:09:19,705 - INFO -    Supervisions: 0
+2026-03-07 21:09:19,706 - INFO -    Error count: 0
+2026-03-07 21:09:19,706 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 21:14:19,708 - INFO - 
+================================================================================
+2026-03-07 21:14:19,726 - INFO - 🚀 Starting batch 3
+2026-03-07 21:14:19,738 - INFO -    Analyzing 3 surahs: [13, 14, 15]
+2026-03-07 21:14:19,738 - INFO - ================================================================================
+2026-03-07 21:14:19,754 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:14:19,755 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:14:19,755 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:14:19,755 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:14:19,755 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:14:19,755 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:14:19,832 - INFO - ✅ Batch 3 completed
+2026-03-07 21:14:19,832 - INFO -    Theories found: 2
+2026-03-07 21:14:19,832 - INFO -    Supervisions: 0
+2026-03-07 21:14:19,832 - INFO -    Error count: 0
+2026-03-07 21:14:19,842 - INFO - 💾 Periodic state save completed
+2026-03-07 21:14:19,842 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 21:16:00,429 - INFO - 📊 Received signal 2 - shutting down gracefully...
+2026-03-07 21:16:00,437 - INFO - ✅ Hive state saved before shutdown
+2026-03-07 21:16:38,776 - INFO - Using SQLite fallback (no pooling needed)
+2026-03-07 21:16:38,780 - INFO - NeonLabAPI connected to database
+2026-03-07 21:16:38,904 - INFO - Meritocracy schema initialized
+2026-03-07 21:16:38,904 - INFO - Meritocracy DB initialized at /workspaces/QL/data/processed/meritocracy.db
+2026-03-07 21:16:38,906 - INFO - Registered agent: Crypt-Worker with role: Cryptographic Engineer
+2026-03-07 21:16:38,906 - INFO - Registered agent: Senior Architect with role: Senior Architect & Reviewer
+2026-03-07 21:16:38,907 - INFO - Registered agent: Linguistic-Worker with role: Linguistic Analyst
+2026-03-07 21:16:38,907 - INFO - Registered agent: Philologist with role: Philological Expert
+2026-03-07 21:16:38,916 - INFO - 🏛️  Continuous Hive Runner initialized
+2026-03-07 21:16:38,917 - INFO -    Batch size: 3 surahs
+2026-03-07 21:16:38,917 - INFO -    Loop interval: 300 seconds
+2026-03-07 21:16:38,917 - INFO - 🏛️  Starting continuous hive operation
+2026-03-07 21:16:38,917 - INFO -    Total surahs available: 29
+2026-03-07 21:16:38,917 - INFO -    Batch size: 3
+2026-03-07 21:16:38,917 - INFO -    Batches per cycle: 9
+2026-03-07 21:16:38,917 - INFO - 
+================================================================================
+2026-03-07 21:16:38,917 - INFO - 🚀 Starting batch 1
+2026-03-07 21:16:38,917 - INFO -    Analyzing 3 surahs: [2, 3, 7]
+2026-03-07 21:16:38,917 - INFO - ================================================================================
+2026-03-07 21:16:38,965 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:16:38,965 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:16:38,965 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:16:38,965 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:16:38,965 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:16:38,965 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:16:38,979 - INFO - ✅ Batch 1 completed
+2026-03-07 21:16:38,979 - INFO -    Theories found: 2
+2026-03-07 21:16:38,979 - INFO -    Supervisions: 0
+2026-03-07 21:16:38,979 - INFO -    Error count: 0
+2026-03-07 21:16:38,979 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 21:21:38,981 - INFO - 
+================================================================================
+2026-03-07 21:21:38,992 - INFO - 🚀 Starting batch 2
+2026-03-07 21:21:38,995 - INFO -    Analyzing 3 surahs: [10, 11, 12]
+2026-03-07 21:21:38,995 - INFO - ================================================================================
+2026-03-07 21:21:39,128 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:21:39,137 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:21:39,137 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:21:39,137 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:21:39,137 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:21:39,137 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:21:39,253 - INFO - ✅ Batch 2 completed
+2026-03-07 21:21:39,261 - INFO -    Theories found: 2
+2026-03-07 21:21:39,262 - INFO -    Supervisions: 0
+2026-03-07 21:21:39,263 - INFO -    Error count: 0
+2026-03-07 21:21:39,264 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 21:26:23,798 - INFO - Using SQLite fallback (no pooling needed)
+2026-03-07 21:26:23,806 - INFO - NeonLabAPI connected to database
+2026-03-07 21:26:23,914 - INFO - Meritocracy schema initialized
+2026-03-07 21:26:23,915 - INFO - Meritocracy DB initialized at /workspaces/QL/data/processed/meritocracy.db
+2026-03-07 21:26:23,919 - INFO - Registered agent: Crypt-Worker with role: Cryptographic Engineer
+2026-03-07 21:26:23,920 - INFO - Registered agent: Senior Architect with role: Senior Architect & Reviewer
+2026-03-07 21:26:23,920 - INFO - Registered agent: Linguistic-Worker with role: Linguistic Analyst
+2026-03-07 21:26:23,920 - INFO - Registered agent: Philologist with role: Philological Expert
+2026-03-07 21:26:23,930 - INFO - 🏛️  Continuous Hive Runner initialized
+2026-03-07 21:26:23,930 - INFO -    Batch size: 3 surahs
+2026-03-07 21:26:23,930 - INFO -    Loop interval: 300 seconds
+2026-03-07 21:26:23,930 - INFO - 🏛️  Starting continuous hive operation
+2026-03-07 21:26:23,930 - INFO -    Total surahs available: 29
+2026-03-07 21:26:23,930 - INFO -    Batch size: 3
+2026-03-07 21:26:23,930 - INFO -    Batches per cycle: 9
+2026-03-07 21:26:23,930 - INFO - 
+================================================================================
+2026-03-07 21:26:23,930 - INFO - 🚀 Starting batch 1
+2026-03-07 21:26:23,930 - INFO -    Analyzing 3 surahs: [2, 3, 7]
+2026-03-07 21:26:23,931 - INFO - ================================================================================
+2026-03-07 21:26:23,966 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:26:23,966 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:26:23,967 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:26:23,967 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:26:23,967 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:26:23,967 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:26:23,975 - INFO - ✅ Batch 1 completed
+2026-03-07 21:26:23,975 - INFO -    Theories found: 2
+2026-03-07 21:26:23,975 - INFO -    Supervisions: 0
+2026-03-07 21:26:23,975 - INFO -    Error count: 0
+2026-03-07 21:26:23,975 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 21:31:23,978 - INFO - 
+================================================================================
+2026-03-07 21:31:24,001 - INFO - 🚀 Starting batch 2
+2026-03-07 21:31:24,003 - INFO -    Analyzing 3 surahs: [10, 11, 12]
+2026-03-07 21:31:24,003 - INFO - ================================================================================
+2026-03-07 21:31:24,035 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:31:24,035 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:31:24,035 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:31:24,035 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:31:24,035 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:31:24,035 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:31:24,100 - INFO - ✅ Batch 2 completed
+2026-03-07 21:31:24,100 - INFO -    Theories found: 2
+2026-03-07 21:31:24,100 - INFO -    Supervisions: 0
+2026-03-07 21:31:24,101 - INFO -    Error count: 0
+2026-03-07 21:31:24,101 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 21:36:24,101 - INFO - 
+================================================================================
+2026-03-07 21:36:24,110 - INFO - 🚀 Starting batch 3
+2026-03-07 21:36:24,110 - INFO -    Analyzing 3 surahs: [13, 14, 15]
+2026-03-07 21:36:24,110 - INFO - ================================================================================
+2026-03-07 21:36:24,116 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:36:24,117 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:36:24,117 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:36:24,117 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:36:24,117 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:36:24,117 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:36:24,124 - INFO - ✅ Batch 3 completed
+2026-03-07 21:36:24,124 - INFO -    Theories found: 2
+2026-03-07 21:36:24,124 - INFO -    Supervisions: 0
+2026-03-07 21:36:24,125 - INFO -    Error count: 0
+2026-03-07 21:36:24,128 - INFO - 💾 Periodic state save completed
+2026-03-07 21:36:24,128 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 21:41:24,128 - INFO - 
+================================================================================
+2026-03-07 21:41:24,128 - INFO - 🚀 Starting batch 4
+2026-03-07 21:41:24,128 - INFO -    Analyzing 3 surahs: [19, 20, 26]
+2026-03-07 21:41:24,128 - INFO - ================================================================================
+2026-03-07 21:41:24,139 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:41:24,139 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:41:24,140 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:41:24,140 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:41:24,140 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:41:24,140 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:41:24,150 - INFO - ✅ Batch 4 completed
+2026-03-07 21:41:24,150 - INFO -    Theories found: 2
+2026-03-07 21:41:24,150 - INFO -    Supervisions: 0
+2026-03-07 21:41:24,150 - INFO -    Error count: 0
+2026-03-07 21:41:24,150 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 21:46:24,151 - INFO - 
+================================================================================
+2026-03-07 21:46:24,195 - INFO - 🚀 Starting batch 5
+2026-03-07 21:46:24,197 - INFO -    Analyzing 3 surahs: [27, 28, 29]
+2026-03-07 21:46:24,200 - INFO - ================================================================================
+2026-03-07 21:46:24,234 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:46:24,235 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:46:24,235 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:46:24,235 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:46:24,237 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:46:24,237 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:46:24,269 - INFO - ✅ Batch 5 completed
+2026-03-07 21:46:24,271 - INFO -    Theories found: 2
+2026-03-07 21:46:24,271 - INFO -    Supervisions: 0
+2026-03-07 21:46:24,271 - INFO -    Error count: 0
+2026-03-07 21:46:24,271 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 21:51:24,286 - INFO - 
+================================================================================
+2026-03-07 21:51:24,325 - INFO - 🚀 Starting batch 6
+2026-03-07 21:51:24,326 - INFO -    Analyzing 3 surahs: [30, 31, 32]
+2026-03-07 21:51:24,326 - INFO - ================================================================================
+2026-03-07 21:51:24,352 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:51:24,353 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:51:24,353 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:51:24,353 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:51:24,353 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:51:24,353 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:51:24,368 - INFO - ✅ Batch 6 completed
+2026-03-07 21:51:24,368 - INFO -    Theories found: 2
+2026-03-07 21:51:24,368 - INFO -    Supervisions: 0
+2026-03-07 21:51:24,368 - INFO -    Error count: 0
+2026-03-07 21:51:24,458 - INFO - 💾 Periodic state save completed
+2026-03-07 21:51:24,459 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 21:56:24,459 - INFO - 
+================================================================================
+2026-03-07 21:56:24,466 - INFO - 🚀 Starting batch 7
+2026-03-07 21:56:24,466 - INFO -    Analyzing 3 surahs: [36, 38, 40]
+2026-03-07 21:56:24,466 - INFO - ================================================================================
+2026-03-07 21:56:24,474 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:56:24,475 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:56:24,475 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:56:24,475 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:56:24,475 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:56:24,475 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 21:56:24,484 - INFO - ✅ Batch 7 completed
+2026-03-07 21:56:24,484 - INFO -    Theories found: 2
+2026-03-07 21:56:24,484 - INFO -    Supervisions: 0
+2026-03-07 21:56:24,484 - INFO -    Error count: 0
+2026-03-07 21:56:24,484 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 22:01:24,648 - INFO - 
+================================================================================
+2026-03-07 22:01:24,772 - INFO - 🚀 Starting batch 8
+2026-03-07 22:01:24,772 - INFO -    Analyzing 3 surahs: [41, 42, 43]
+2026-03-07 22:01:24,772 - INFO - ================================================================================
+2026-03-07 22:01:24,982 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:01:24,982 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:01:24,982 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:01:24,982 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:01:24,983 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:01:24,983 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:01:25,241 - INFO - ✅ Batch 8 completed
+2026-03-07 22:01:25,241 - INFO -    Theories found: 2
+2026-03-07 22:01:25,241 - INFO -    Supervisions: 0
+2026-03-07 22:01:25,242 - INFO -    Error count: 0
+2026-03-07 22:01:25,242 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 22:03:31,989 - INFO - Using SQLite fallback (no pooling needed)
+2026-03-07 22:03:32,004 - INFO - NeonLabAPI connected to database
+2026-03-07 22:03:32,154 - INFO - Meritocracy schema initialized
+2026-03-07 22:03:32,154 - INFO - Meritocracy DB initialized at /workspaces/QL/data/processed/meritocracy.db
+2026-03-07 22:03:32,161 - INFO - Registered agent: Crypt-Worker with role: Cryptographic Engineer
+2026-03-07 22:03:32,162 - INFO - Registered agent: Senior Architect with role: Senior Architect & Reviewer
+2026-03-07 22:03:32,162 - INFO - Registered agent: Linguistic-Worker with role: Linguistic Analyst
+2026-03-07 22:03:32,162 - INFO - Registered agent: Philologist with role: Philological Expert
+2026-03-07 22:03:32,173 - INFO - 🏛️  Continuous Hive Runner initialized
+2026-03-07 22:03:32,173 - INFO -    Batch size: 3 surahs
+2026-03-07 22:03:32,173 - INFO -    Loop interval: 300 seconds
+2026-03-07 22:03:32,173 - INFO - 🏛️  Starting continuous hive operation
+2026-03-07 22:03:32,173 - INFO -    Total surahs available: 29
+2026-03-07 22:03:32,173 - INFO -    Batch size: 3
+2026-03-07 22:03:32,173 - INFO -    Batches per cycle: 9
+2026-03-07 22:03:32,173 - INFO - 
+================================================================================
+2026-03-07 22:03:32,173 - INFO - 🚀 Starting batch 1
+2026-03-07 22:03:32,173 - INFO -    Analyzing 3 surahs: [2, 3, 7]
+2026-03-07 22:03:32,173 - INFO - ================================================================================
+2026-03-07 22:03:32,204 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:03:32,204 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:03:32,204 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:03:32,204 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:03:32,204 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:03:32,205 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:03:32,212 - INFO - ✅ Batch 1 completed
+2026-03-07 22:03:32,212 - INFO -    Theories found: 2
+2026-03-07 22:03:32,213 - INFO -    Supervisions: 0
+2026-03-07 22:03:32,213 - INFO -    Error count: 0
+2026-03-07 22:03:32,213 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 22:06:25,311 - INFO - 
+================================================================================
+2026-03-07 22:06:25,413 - INFO - 🚀 Starting batch 9
+2026-03-07 22:06:25,413 - INFO -    Analyzing 3 surahs: [44, 45, 46]
+2026-03-07 22:06:25,413 - INFO - ================================================================================
+2026-03-07 22:06:25,533 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:06:25,533 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:06:25,533 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:06:25,533 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:06:25,533 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:06:25,533 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:06:25,789 - INFO - ✅ Batch 9 completed
+2026-03-07 22:06:25,789 - INFO -    Theories found: 2
+2026-03-07 22:06:25,789 - INFO -    Supervisions: 0
+2026-03-07 22:06:25,789 - INFO -    Error count: 0
+2026-03-07 22:06:25,796 - INFO - 💾 Periodic state save completed
+2026-03-07 22:06:25,796 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 22:08:32,343 - INFO - 
+================================================================================
+2026-03-07 22:08:32,381 - INFO - 🚀 Starting batch 2
+2026-03-07 22:08:32,381 - INFO -    Analyzing 3 surahs: [10, 11, 12]
+2026-03-07 22:08:32,381 - INFO - ================================================================================
+2026-03-07 22:08:32,678 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:08:32,679 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:08:32,679 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:08:32,680 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:08:32,680 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:08:32,680 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:08:32,923 - INFO - ✅ Batch 2 completed
+2026-03-07 22:08:32,924 - INFO -    Theories found: 2
+2026-03-07 22:08:32,924 - INFO -    Supervisions: 0
+2026-03-07 22:08:32,924 - INFO -    Error count: 0
+2026-03-07 22:08:32,924 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 22:11:25,822 - INFO - 
+================================================================================
+2026-03-07 22:11:25,858 - INFO - 🚀 Starting batch 10
+2026-03-07 22:11:25,858 - INFO -    Analyzing 2 surahs: [50, 68]
+2026-03-07 22:11:25,859 - INFO - ================================================================================
+2026-03-07 22:11:25,915 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:11:25,915 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:11:25,915 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:11:25,915 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:11:26,015 - INFO - ✅ Batch 10 completed
+2026-03-07 22:11:26,016 - INFO -    Theories found: 2
+2026-03-07 22:11:26,016 - INFO -    Supervisions: 0
+2026-03-07 22:11:26,016 - INFO -    Error count: 0
+2026-03-07 22:11:26,016 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 22:13:32,924 - INFO - 
+================================================================================
+2026-03-07 22:13:32,931 - INFO - 🚀 Starting batch 3
+2026-03-07 22:13:32,931 - INFO -    Analyzing 3 surahs: [13, 14, 15]
+2026-03-07 22:13:32,932 - INFO - ================================================================================
+2026-03-07 22:13:32,939 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:13:32,939 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:13:32,940 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:13:32,940 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:13:32,940 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:13:32,940 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:13:32,950 - INFO - ✅ Batch 3 completed
+2026-03-07 22:13:32,951 - INFO -    Theories found: 2
+2026-03-07 22:13:32,951 - INFO -    Supervisions: 0
+2026-03-07 22:13:32,952 - INFO -    Error count: 0
+2026-03-07 22:13:32,954 - INFO - 💾 Periodic state save completed
+2026-03-07 22:13:32,954 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 22:16:26,016 - INFO - 
+================================================================================
+2026-03-07 22:16:26,025 - INFO - 🚀 Starting batch 11
+2026-03-07 22:16:26,026 - INFO -    Analyzing 3 surahs: [3, 7, 10]
+2026-03-07 22:16:26,026 - INFO - ================================================================================
+2026-03-07 22:16:26,058 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:16:26,058 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:16:26,058 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:16:26,058 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:16:26,058 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:16:26,058 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:16:26,072 - INFO - ✅ Batch 11 completed
+2026-03-07 22:16:26,072 - INFO -    Theories found: 2
+2026-03-07 22:16:26,072 - INFO -    Supervisions: 0
+2026-03-07 22:16:26,072 - INFO -    Error count: 0
+2026-03-07 22:16:26,072 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 22:18:32,987 - INFO - 
+================================================================================
+2026-03-07 22:18:33,011 - INFO - 🚀 Starting batch 4
+2026-03-07 22:18:33,011 - INFO -    Analyzing 3 surahs: [19, 20, 26]
+2026-03-07 22:18:33,011 - INFO - ================================================================================
+2026-03-07 22:18:33,073 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:18:33,073 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:18:33,073 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:18:33,073 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:18:33,073 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:18:33,073 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:18:33,265 - INFO - ✅ Batch 4 completed
+2026-03-07 22:18:33,266 - INFO -    Theories found: 2
+2026-03-07 22:18:33,266 - INFO -    Supervisions: 0
+2026-03-07 22:18:33,266 - INFO -    Error count: 0
+2026-03-07 22:18:33,266 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 22:21:26,072 - INFO - 
+================================================================================
+2026-03-07 22:21:26,120 - INFO - 🚀 Starting batch 12
+2026-03-07 22:21:26,120 - INFO -    Analyzing 3 surahs: [11, 12, 13]
+2026-03-07 22:21:26,120 - INFO - ================================================================================
+2026-03-07 22:21:26,128 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:21:26,128 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:21:26,128 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:21:26,128 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:21:26,128 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:21:26,128 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:21:26,138 - INFO - ✅ Batch 12 completed
+2026-03-07 22:21:26,138 - INFO -    Theories found: 2
+2026-03-07 22:21:26,138 - INFO -    Supervisions: 0
+2026-03-07 22:21:26,138 - INFO -    Error count: 0
+2026-03-07 22:21:26,155 - INFO - 💾 Periodic state save completed
+2026-03-07 22:21:26,155 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 22:23:33,266 - INFO - 
+================================================================================
+2026-03-07 22:23:33,270 - INFO - 🚀 Starting batch 5
+2026-03-07 22:23:33,270 - INFO -    Analyzing 3 surahs: [27, 28, 29]
+2026-03-07 22:23:33,270 - INFO - ================================================================================
+2026-03-07 22:23:33,280 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:23:33,280 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:23:33,280 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:23:33,280 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:23:33,280 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:23:33,281 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:23:33,295 - INFO - ✅ Batch 5 completed
+2026-03-07 22:23:33,295 - INFO -    Theories found: 2
+2026-03-07 22:23:33,295 - INFO -    Supervisions: 0
+2026-03-07 22:23:33,295 - INFO -    Error count: 0
+2026-03-07 22:23:33,296 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 22:26:26,157 - INFO - 
+================================================================================
+2026-03-07 22:26:26,205 - INFO - 🚀 Starting batch 13
+2026-03-07 22:26:26,205 - INFO -    Analyzing 3 surahs: [14, 15, 19]
+2026-03-07 22:26:26,205 - INFO - ================================================================================
+2026-03-07 22:26:26,215 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:26:26,215 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:26:26,215 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:26:26,215 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:26:26,215 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:26:26,215 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:26:26,227 - INFO - ✅ Batch 13 completed
+2026-03-07 22:26:26,227 - INFO -    Theories found: 2
+2026-03-07 22:26:26,227 - INFO -    Supervisions: 0
+2026-03-07 22:26:26,227 - INFO -    Error count: 0
+2026-03-07 22:26:26,228 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 22:28:33,296 - INFO - 
+================================================================================
+2026-03-07 22:28:33,429 - INFO - 🚀 Starting batch 6
+2026-03-07 22:28:33,429 - INFO -    Analyzing 3 surahs: [30, 31, 32]
+2026-03-07 22:28:33,430 - INFO - ================================================================================
+2026-03-07 22:28:33,440 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:28:33,441 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:28:33,441 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:28:33,441 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:28:33,441 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:28:33,441 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:28:33,453 - INFO - ✅ Batch 6 completed
+2026-03-07 22:28:33,453 - INFO -    Theories found: 2
+2026-03-07 22:28:33,453 - INFO -    Supervisions: 0
+2026-03-07 22:28:33,453 - INFO -    Error count: 0
+2026-03-07 22:28:33,487 - INFO - 💾 Periodic state save completed
+2026-03-07 22:28:33,487 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 22:31:26,228 - INFO - 
+================================================================================
+2026-03-07 22:31:26,256 - INFO - 🚀 Starting batch 14
+2026-03-07 22:31:26,256 - INFO -    Analyzing 3 surahs: [20, 26, 27]
+2026-03-07 22:31:26,256 - INFO - ================================================================================
+2026-03-07 22:31:26,263 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:31:26,263 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:31:26,263 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:31:26,263 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:31:26,263 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:31:26,263 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:31:26,270 - INFO - ✅ Batch 14 completed
+2026-03-07 22:31:26,270 - INFO -    Theories found: 2
+2026-03-07 22:31:26,270 - INFO -    Supervisions: 0
+2026-03-07 22:31:26,270 - INFO -    Error count: 0
+2026-03-07 22:31:26,270 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 22:33:33,488 - INFO - 
+================================================================================
+2026-03-07 22:33:33,534 - INFO - 🚀 Starting batch 7
+2026-03-07 22:33:33,534 - INFO -    Analyzing 3 surahs: [36, 38, 40]
+2026-03-07 22:33:33,534 - INFO - ================================================================================
+2026-03-07 22:33:33,560 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:33:33,560 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:33:33,561 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:33:33,561 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:33:33,561 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:33:33,561 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:33:33,594 - INFO - ✅ Batch 7 completed
+2026-03-07 22:33:33,597 - INFO -    Theories found: 2
+2026-03-07 22:33:33,597 - INFO -    Supervisions: 0
+2026-03-07 22:33:33,597 - INFO -    Error count: 0
+2026-03-07 22:33:33,597 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 22:36:26,270 - INFO - 
+================================================================================
+2026-03-07 22:36:26,387 - INFO - 🚀 Starting batch 15
+2026-03-07 22:36:26,387 - INFO -    Analyzing 3 surahs: [28, 29, 30]
+2026-03-07 22:36:26,387 - INFO - ================================================================================
+2026-03-07 22:36:26,393 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:36:26,394 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:36:26,394 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:36:26,394 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:36:26,394 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:36:26,394 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:36:26,401 - INFO - ✅ Batch 15 completed
+2026-03-07 22:36:26,401 - INFO -    Theories found: 2
+2026-03-07 22:36:26,401 - INFO -    Supervisions: 0
+2026-03-07 22:36:26,401 - INFO -    Error count: 0
+2026-03-07 22:36:26,403 - INFO - 💾 Periodic state save completed
+2026-03-07 22:36:26,403 - INFO - ⏳ Waiting 300s before next batch...
+2026-03-07 22:38:33,597 - INFO - 
+================================================================================
+2026-03-07 22:38:33,598 - INFO - 🚀 Starting batch 8
+2026-03-07 22:38:33,598 - INFO -    Analyzing 3 surahs: [41, 42, 43]
+2026-03-07 22:38:33,598 - INFO - ================================================================================
+2026-03-07 22:38:33,602 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:38:33,602 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:38:33,603 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:38:33,603 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:38:33,603 - ERROR - Failed to open ticket: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:38:33,603 - ERROR - Failed to fetch surah context: 'sqlite3.Cursor' object does not support the context manager protocol
+2026-03-07 22:38:33,609 - INFO - ✅ Batch 8 completed
+2026-03-07 22:38:33,609 - INFO -    Theories found: 2
+2026-03-07 22:38:33,609 - INFO -    Supervisions: 0
+2026-03-07 22:38:33,610 - INFO -    Error count: 0
+2026-03-07 22:38:33,610 - INFO - ⏳ Waiting 300s before next batch...

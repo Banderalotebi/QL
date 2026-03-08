@@ -176,7 +176,7 @@ class BroadcastPanel:
             st.info("All broadcasts distributed")
             return
         
-        for msg in pending:
+        for idx, msg in enumerate(pending):
             with st.container(border=True):
                 col1, col2 = st.columns([4, 1])
                 
@@ -185,9 +185,11 @@ class BroadcastPanel:
                     st.write(msg.get("content", "")[:100])
                 
                 with col2:
-                    if st.button("✓ Ack", key=f"ack_{msg.get('id', '')}"):
+                    # Use unique key with index to avoid duplicates
+                    msg_id = msg.get('message_id') or msg.get('id') or f"msg_{idx}"
+                    if st.button("✓ Ack", key=f"ack_{msg_id}_{idx}"):
                         if hasattr(hive, 'acknowledge_broadcast'):
-                            hive.acknowledge_broadcast(msg.get('id', ''))
+                            hive.acknowledge_broadcast(msg_id, agent_id="system")
                         st.success("Acknowledged by all agents")
     
     @staticmethod

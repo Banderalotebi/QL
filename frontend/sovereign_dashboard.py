@@ -26,6 +26,7 @@ from src.agents.hive_council import get_hive_council
 from src.data.meritocracy_db import get_meritocracy_db
 from src.core.langgraph_control import get_graph_controller, get_interrupt_manager
 from frontend.components.pattern_web import get_pattern_web_visualizer
+from frontend.components.server_status import create_server_status_tab, get_service_status, get_hive_process_info
 from frontend.components.meritocracy_panel import create_meritocracy_tab, MeritocracyPanel
 from frontend.components.knowledge_broadcast import create_knowledge_broadcast_tab
 from frontend.components.execution_queue import create_execution_queue_tab
@@ -390,13 +391,15 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Create main tabs
-tab_research, tab_meritocracy, tab_knowledge, tab_execution, tab_control, tab_dashboard = st.tabs([
+tab_research, tab_meritocracy, tab_knowledge, tab_execution, tab_control, tab_dashboard, tab_server, tab_all_work = st.tabs([
     "🔮 Research Foundry",
     "🏆 Agent Meritocracy",
     "📡 Knowledge Broadcast",
     "📋 Execution Queue",
     "🕹️ System Control",
-    "📊 Dashboard"
+    "📊 Dashboard",
+    "🖥️ Server Status",
+    "📋 All Work"
 ])
 
 # ──────────────────────────────────────────────────────────────────
@@ -595,7 +598,8 @@ with tab_dashboard:
             st.metric("Agent of Day", aotd['agent_id'], f"Score: {aotd.get('performance_score', 0):.2f}")
     
     with col3:
-        total_agents = len(hive.meritocracy_db.get_all_agents())
+        all_agents = get_all_agents()
+        total_agents = len(all_agents) if all_agents else 0
         st.metric("Active Agents", total_agents, "In Hive")
     
     with col4:
@@ -624,6 +628,345 @@ with tab_dashboard:
         st.metric("Supervisions", hive_metrics.get('total_supervisions', 0))
         st.metric("Ollama 3.1 Enabled", "✓" if hive_metrics.get('ollama_enabled') else "✗")
         st.metric("Database Connected", "✓" if hive_metrics.get('database_connected') else "✗")
+
+
+# ──────────────────────────────────────────────────────────────────
+# TAB 7: SERVER STATUS
+# ──────────────────────────────────────────────────────────────────
+
+with tab_server:
+    st.header("🖥️ Server Status & Control")
+    
+    # Import server status functions
+    from frontend.components.server_status import (
+        get_service_status, get_hive_process_info, get_latest_hive_logs
+    )
+    
+    # Services to check
+    services = ["API Server", "Streamlit Dashboard", "Continuous Hive", "Database"]
+    
+    # Get status for all services
+    service_statuses = {}
+    for service in services:
+        service_statuses[service] = get_service_status(service)
+    
+    # Display status cards
+    cols = st.columns(4)
+    
+    for idx, (service, status) in enumerate(service_statuses.items()):
+        with cols[idx]:
+            # Status indicator
+            if status["status"] == "running" or status["status"] == "connected":
+                status_icon = "🟢"
+                status_color = "#3fb950"
+            elif status["status"] == "timeout":
+                status_icon = "🟡"
+                status_color = "#d29922"
+            else:
+                status_icon = "🔴"
+                status_color = "#f85149"
+            
+            st.markdown(f"""
+            <div style="
+                padding: 10px; 
+                border-radius: 5px; 
+                background-color: #161b22;
+                border-left: 4px solid {status_color};
+                margin-bottom: 10px;
+            ">
+                <strong>{status_icon} {service}</strong><br>
+                <small>Status: {status['status'].upper()}</small>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Show additional details
+            if service == "Continuous Hive" and status.get("status") == "running":
+                st.metric("CPU", f"{status.get('cpu_percent', 0):.1f}%")
+                st.metric("Memory", f"{status.get('memory_mb', 0):.1f} MB")
+                st.caption(f"Uptime: {status.get('uptime', 'N/A')}")
+                st.caption(f"PID: {status.get('pid', 'N/A')}")
+    
+    st.divider()
+    
+    # Process Details Section
+    st.subheader("⚙️ Process Details")
+    
+    hive_info = get_hive_process_info()
+    
+    if hive_info:
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            st.metric("PID", hive_info.get("pid", "N/A"))
+        with col2:
+            st.metric("Threads", hive_info.get("num_threads", "N/A"))
+        with col3:
+            st.metric("Memory", f"{hive_info.get('memory_mb', 0):.1f} MB")
+        with col4:
+            st.metric("CPU", f"{hive_info.get('cpu_percent', 0):.1f}%")
+    else:
+        st.info("No Hive process currently running. Start the Hive to see process details.")
+    
+    st.divider()
+    
+    # Service Control Section
+    st.subheader("🎮 Service Control")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        import subprocess
+        if hive_info:
+            if st.button("⏹️ Stop Hive", use_container_width=True):
+                try:
+                    import os
+                    os.kill(hive_info["pid"], 9)
+                    st.success("Hive stopped!")
+                    import time
+                    time.sleep(1)
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Error: {e}")
+        else:
+            if st.button("🚀 Start Hive", use_container_width=True):
+                subprocess.Popen(
+                    ["bash", "/workspaces/QL/start_hive.sh"],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+                st.success("Hive starting...")
+                import time
+                time.sleep(2)
+                st.rerun()
+    
+    with col2:
+        if st.button("💾 Save Hive State", use_container_width=True):
+            try:
+                requests.post(f"{API_BASE}/hive/save", timeout=5)
+                st.success("State saved!")
+            except Exception as e:
+                st.error(f"API not available: {e}")
+    
+    with col3:
+        if st.button("📊 Open Monitor", use_container_width=True):
+            st.info("Run './monitor_hive.sh' in terminal to watch live logs")
+    
+    st.divider()
+    
+    # Log Viewer Section
+    st.subheader("📋 Live Hive Logs")
+    
+    col1, col2 = st.columns([1, 4])
+    
+    with col1:
+        num_lines = st.selectbox("Lines", [20, 50, 100, 200], index=1)
+    
+    with col2:
+        if st.button("🔄 Refresh Logs"):
+            st.rerun()
+    
+    logs = get_latest_hive_logs(num_lines)
+    
+    if logs:
+        st.text_area(
+            "Log Output",
+            "\n".join(logs),
+            height=300,
+            disabled=True
+        )
+    else:
+        st.info("No logs available. Start the Hive to see logs.")
+
+
+# ──────────────────────────────────────────────────────────────────
+# TAB 8: ALL WORK
+# ──────────────────────────────────────────────────────────────────
+
+with tab_all_work:
+    st.header("📋 All Work - Complete Research History")
+    
+    # Import the all work view component
+    from frontend.components.all_work_view import (
+        load_hive_state, load_hive_memory, load_knowledge_graph, load_last_report
+    )
+    
+    # Research Runs Section
+    st.subheader("🔬 Research Runs")
+    
+    last_report = load_last_report()
+    
+    if last_report:
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            theories = last_report.get("ranked_theories", [])
+            st.metric("Total Theories", len(theories))
+        
+        with col2:
+            st.metric("Timestamp", last_report.get("timestamp", "N/A")[:10])
+        
+        with col3:
+            st.metric("Surahs Analyzed", len(last_report.get("surah_numbers", [])))
+        
+        with col4:
+            st.metric("Focus", last_report.get("focus", "N/A"))
+        
+        with st.expander("View Top Theories"):
+            for i, theory in enumerate(theories[:20], 1):
+                st.write(f"{i}. **{theory.get('source_scout', 'Unknown')}** - Score: {theory.get('score', 0):.3f}")
+                st.caption(f"Goal: {theory.get('goal_link', 'N/A')[:80]}...")
+    else:
+        st.info("No research runs recorded yet")
+    
+    # Supervision Reports Section
+    st.divider()
+    st.subheader("📋 Supervision Reports")
+    
+    hive_state = load_hive_state()
+    reports = hive_state.get("supervision_reports", [])
+    
+    if reports:
+        col1, col2, col3, col4 = st.columns(4)
+        
+        approved = len([r for r in reports if r.get("status") == "APPROVED"])
+        revised = len([r for r in reports if r.get("status") == "REVISED"])
+        rejected = len([r for r in reports if r.get("status") == "REJECTED"])
+        
+        with col1:
+            st.metric("Total Reports", len(reports))
+        with col2:
+            st.metric("Approved", approved)
+        with col3:
+            st.metric("Revised", revised)
+        with col4:
+            st.metric("Rejected", rejected)
+        
+        status_filter = st.multiselect(
+            "Filter by Status",
+            ["APPROVED", "REVISED", "REJECTED"],
+            default=["APPROVED", "REVISED", "REJECTED"]
+        )
+        
+        filtered_reports = [r for r in reports if r.get("status") in status_filter]
+        
+        for report in filtered_reports[-30:]:
+            status = report.get("status", "UNKNOWN")
+            
+            if status == "APPROVED":
+                color = "green"
+                icon = "✅"
+            elif status == "REVISED":
+                color = "yellow"
+                icon = "📝"
+            else:
+                color = "red"
+                icon = "❌"
+            
+            st.markdown(f"""
+            <div style="padding: 8px; border-radius: 5px; background-color: #161b22; border-left: 4px solid {color}; margin: 3px 0;">
+                <strong>{icon} {status}</strong> | Score: {report.get('final_score', 0):.3f}<br>
+                <small>Worker: {report.get('worker_agent', 'N/A')} → Expert: {report.get('expert_agent', 'N/A')}</small>
+            </div>
+            """, unsafe_allow_html=True)
+    else:
+        st.info("No supervision reports yet")
+    
+    # Agent Thoughts Section
+    st.divider()
+    st.subheader("🧠 Agent Thoughts")
+    
+    thoughts = hive_state.get("thoughts_log", [])
+    
+    if thoughts:
+        st.metric("Total Thoughts", len(thoughts))
+        
+        agents = list(set([t.get("agent_role", "Unknown") for t in thoughts]))
+        agent_filter = st.multiselect("Filter by Agent", agents, default=agents)
+        
+        filtered_thoughts = [t for t in thoughts if t.get("agent_role") in agent_filter]
+        
+        for thought in filtered_thoughts[-20:]:
+            st.markdown(f"""
+            <div style="padding: 8px; border-radius: 5px; background-color: #1e1e1e; margin: 3px 0;">
+                <strong>{thought.get('agent_role', 'Unknown')}</strong> @ {thought.get('timestamp', 'N/A')[:19]}<br>
+                <em>{thought.get('thought', 'N/A')[:100]}...</em><br>
+                💡 {thought.get('decision', 'N/A')} | Conf: {thought.get('confidence', 0):.2f}
+            </div>
+            """, unsafe_allow_html=True)
+    else:
+        st.info("No agent thoughts logged yet")
+    
+    # Knowledge Graph Section
+    st.divider()
+    st.subheader("🌐 Knowledge Graph")
+    
+    kg = load_knowledge_graph()
+    
+    if kg:
+        nodes = kg.get("nodes", [])
+        edges = kg.get("edges", [])
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.metric("Total Nodes", len(nodes))
+        with col2:
+            st.metric("Total Edges", len(edges))
+    else:
+        st.info("No knowledge graph data yet")
+    
+    # Broadcasts Section
+    st.divider()
+    st.subheader("📡 Knowledge Broadcasts")
+    
+    hive_memory = load_hive_memory()
+    broadcasts = hive_memory.get("broadcast_history", [])
+    
+    if broadcasts:
+        st.metric("Total Broadcasts", len(broadcasts))
+        
+        for broadcast in broadcasts[-20:]:
+            priority = broadcast.get("priority", "normal")
+            color = "red" if priority == "high" else "blue"
+            icon = "🔴" if priority == "high" else "🔵"
+            
+            st.markdown(f"""
+            <div style="padding: 8px; border-radius: 5px; background-color: #1e1e1e; border-left: 4px solid {color}; margin: 3px 0;">
+                <strong>{icon} {broadcast.get('type', 'Message')}</strong> | {priority}<br>
+                {broadcast.get('content', 'N/A')[:80]}...<br>
+                <small>From: {broadcast.get('sender', 'Unknown')}</small>
+            </div>
+            """, unsafe_allow_html=True)
+    else:
+        st.info("No broadcasts yet")
+    
+    # Shared Memory Section
+    st.divider()
+    st.subheader("💾 Shared Memory")
+    
+    if hive_memory:
+        patterns = hive_memory.get("verified_patterns", [])
+        errors = hive_memory.get("known_errors", [])
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            with st.expander(f"✅ Verified Patterns ({len(patterns)})"):
+                if patterns:
+                    for p in patterns:
+                        st.success(f"✓ {p}")
+                else:
+                    st.info("No verified patterns")
+        
+        with col2:
+            with st.expander(f"❌ Known Errors ({len(errors)})"):
+                if errors:
+                    for e in errors:
+                        st.error(f"✗ {e}")
+                else:
+                    st.info("No known errors")
+    else:
+        st.info("No shared memory data")
 
 
 # ──────────────────────────────────────────────────────────────────

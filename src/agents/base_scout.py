@@ -1,27 +1,51 @@
+"""
+Base Scout Agent for the Muqattaat Cryptanalytic Lab.
+
+Each Scout specializes in a specific type of pattern analysis:
+- Rasm scouts analyze skeletal letter sequences
+- Tashkeel scouts analyze diacritic patterns
+"""
 from abc import ABC, abstractmethod
+from typing import Any, Dict, List
+
 from src.core.state import ResearchState, Hypothesis
+from src.data.muqattaat import MUQATTAAT_SURAHS, MUQATTAAT_MAPPING
+
 
 class BaseScout(ABC):
     """
     Base class for all Scout agents in the Muqattaat Cryptanalytic Lab.
     
-    Each Scout specializes in a specific type of pattern analysis:
-    - Rasm scouts analyze skeletal letter sequences
-    - Tashkeel scouts analyze diacritic patterns
+    Each Scout specializes in a specific type of pattern analysis.
     """
     
     name: str = "BaseScout"
     consumes_rasm: bool = False
     consumes_tashkeel: bool = False
     
+    # Muqattaat constants for easy access
+    MUQATTAAT_SURAHS = MUQATTAAT_SURAHS
+    MUQATTAAT_MAPPING = MUQATTAAT_MAPPING
+    
     def run(self, state: ResearchState) -> ResearchState:
         """
         Main entry point for Scout execution.
         Calls analyze() and appends results to raw_hypotheses.
+        
+        Args:
+            state: Current research state
+            
+        Returns:
+            Updated research state
         """
         hypotheses = self.analyze(state)
         
-        # Append to raw_hypotheses (don't overwrite)
+        # Validate each hypothesis has non-empty goal_link
+        for h in hypotheses:
+            if not h.goal_link.strip():
+                raise ValueError(f"{self.name} produced hypothesis with empty goal_link")
+        
+        # Append to raw_hypotheses
         raw_hypotheses = state.get("raw_hypotheses", [])
         raw_hypotheses.extend(hypotheses)
         state["raw_hypotheses"] = raw_hypotheses
@@ -29,7 +53,7 @@ class BaseScout(ABC):
         return state
     
     @abstractmethod
-    def analyze(self, state: ResearchState) -> list[Hypothesis]:
+    def analyze(self, state: ResearchState) -> List[Hypothesis]:
         """
         Analyze the research state and generate hypotheses.
         
@@ -45,20 +69,53 @@ class BaseScout(ABC):
         """Print a casual greeting to the console."""
         print(f"Hey {name}")
     
-    def run(self, state: ResearchState) -> ResearchState:
-        """Standard run method that calls analyze and appends to raw_hypotheses."""
-        hypotheses = self.analyze(state)
+    def make_hypothesis(
+        self,
+        description: str,
+        goal_link: str,
+        transformation_steps: int,
+        evidence_snippets: List[str] = None,
+        surah_refs: List[int] = None,
+        metadata: Dict[str, Any] = None,
+    ) -> Hypothesis:
+        """
+        Convenience factory for creating Hypothesis objects.
         
-        # Validate each hypothesis has non-empty goal_link
-        for h in hypotheses:
-            if not h.goal_link.strip():
-                raise ValueError(f"{self.name} produced hypothesis with empty goal_link")
+        Args:
+            description: Human-readable description
+            goal_link: Explanation of Muqattaat relevance
+            transformation_steps: Number of transformations applied
+            evidence_snippets: Supporting evidence
+            surah_refs: Related Surah numbers
+            metadata: Additional metadata
+            
+        Returns:
+            Configured Hypothesis object
+        """
+        return Hypothesis(
+            source_scout=self.name,
+            description=description,
+            goal_link=goal_link,
+            transformation_steps=transformation_steps,
+            evidence_snippets=evidence_snippets or [],
+            surah_refs=surah_refs or [],
+            metadata=metadata or {},
+        )
+    
+    def get_muqattaat_surahs(self, state: ResearchState) -> Dict[int, Any]:
+        """
+        Get only the matrices for Muqattaat Surahs (priority targets).
         
-        # Append to raw_hypotheses
-        raw_hypotheses = state.get("raw_hypotheses", [])
-        raw_hypotheses.extend(hypotheses)
-        state["raw_hypotheses"] = raw_hypotheses
-        
-        self.greeting(state.get("name", "Unknown"))
-        
-        return state
+        Args:
+            state: Current research state
+            
+        Returns:
+            Dictionary of surah_id -> matrix for Muqattaat Surahs
+        """
+        rasm_matrices = state.get("rasm_matrices", {})
+        return {
+            snum: mat
+            for snum, mat in rasm_matrices.items()
+            if snum in self.MUQATTAAT_SURAHS
+        }
+

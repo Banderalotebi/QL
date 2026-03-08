@@ -25,7 +25,7 @@ railway variable set NEO4J_PASSWORD "your_secure_password"
 railway variable set OLLAMA_BASE_URL "http://ollama-server:11434"
 
 # Verify
-railway variable list
+
 ```
 
 #### Option 2: Via Railway Dashboard
@@ -75,7 +75,7 @@ railway logs --tail 50
 railway open  # Opens in browser
 
 # Or manually
-curl https://your-railway-domain.up.railway.app/system/health
+curl https://railway.com/project/af161da8-7815-4411-ba6e-335d9033ff7b?environmentId=f4cb313e-e3e5-43c7-9bfc-fa66c830c2c6
 ```
 
 ## 📊 Current Deployment Config
@@ -158,7 +158,7 @@ railway status
 ### Get Project Info
 ```bash
 railway list
-railway info
+railway status
 ```
 
 ## 🔄 Redeploy After Changes
