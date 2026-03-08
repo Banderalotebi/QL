@@ -4,7 +4,7 @@
 # Install with: pip install -r requirements-prod.txt
 
 # AI/ML Core (REQUIRED)
-langgraph>=0.1.0,<1.0.0
+langgraph>=0.1.0,<2.0.0
 langchain-core>=0.1.0,<1.0.0
 anthropic>=0.25.0,<1.0.0
 
