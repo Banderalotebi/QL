@@ -32,7 +32,7 @@ aiohttp>=3.9.0,<4.0.0
 httpx>=0.24.0
 
 # Database (REQUIRED)
-neo4j>=5.0.0,<6.0.0
+neo4j>=5.0.0,<7.0.0
 
 # REMOVED: Testing & Code Quality (not needed in production)
 # pytest, pytest-cov, pytest-asyncio, pytest-xdist, flake8, black, mypy
