@@ -13,7 +13,7 @@ python-bidi>=0.4.2
 
 # Data Processing
 networkx>=3.0,<4.0
-pandas>=2.0.0,<3.0.0
+pandas>=3.0.2,<4.0.0
 numpy>=1.24.0,<2.0.0
 scipy>=1.11.0,<2.0.0
 
